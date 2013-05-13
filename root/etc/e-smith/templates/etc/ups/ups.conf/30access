@@ -1,0 +1,7 @@
+[UPS]
+{
+    $driver = $ups{'Model'} || '';
+    $device = $ups{'Device'} || '';
+    $OUT.="driver = $driver\n";
+    $OUT.="port = $device";
+}

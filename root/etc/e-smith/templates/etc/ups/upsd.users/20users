@@ -1,0 +1,6 @@
+[upsmon]
+{
+    my $password = $ups{'Password'} || '';
+    $OUT.="    password = $password";
+}
+        upsmon master

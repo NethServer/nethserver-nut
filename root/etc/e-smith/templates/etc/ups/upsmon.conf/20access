@@ -1,0 +1,13 @@
+{
+
+    my $ip = '';
+    my $pass = $ups{'Password'} || ' ';
+    my $mode = $ups{'Mode'} || 'master';
+    if ($mode eq 'master') {
+        $ip = '127.0.0.1';
+    } else {
+        $ip = $ups{'Master'} || '';
+    }
+
+    $OUT.="MONITOR UPS\@$ip 1 upsmon $pass $mode";
+}

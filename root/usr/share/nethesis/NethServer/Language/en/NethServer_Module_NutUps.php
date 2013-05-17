@@ -1,9 +1,24 @@
 <?php
 
+$L['model_label'] = 'Model';
+$L['ups_status_label'] = 'Status';
+$L['temperature_label'] = 'Temperature';
+$L['battery_chrg_label'] = 'Battery charge';
+$L['battery_volt_label'] = 'Battery voltage';
+$L['input_volt_label'] = 'Input voltage';
+$L['output_volt_label'] = 'Output voltage';
+$L['load_label'] = 'Load';
+$L['nut_title'] = 'UPS';
+$L['show_full_status_label'] = 'Show full status';
+$L['on_line_label'] = 'Online';
+$L['on_line_chrg_label'] = 'Online - Battery charging';
+$L['on_battery_label'] = 'On battery';
+$L['low_battery_label'] = 'On battery - Low battery';
 $L['enabled_label'] = 'Enable';
 $L['disabled_label'] = 'Disable';
 $L['NutUps_Title'] = 'UPS';
 $L['status_label'] = 'Enable NUT UPS';
+$L['ups_status_label'] = 'UPS status';
 $L['Password_label'] = 'Password';
 $L['Master_label'] = 'Master server address';
 $L['Mode_label'] = 'Mode';
@@ -11,3 +26,11 @@ $L['Mode_master_label'] = 'Master';
 $L['Mode_slave_label'] = 'Slave';
 $L['Model_label'] = 'Model';
 $L['Device_label'] = 'Device';
+$L['Description_label'] = 'Model';
+$L['Type_usb_label'] = 'Usb connection';
+$L['Type_serial_label'] = 'Serial connection';
+$L['/dev/ttyS0_label'] = "COM1 (ttyS0)";
+$L['/dev/ttyS1_label'] = "COM2 (ttyS1)";
+$L['/dev/ttyS2_label'] = "COM3 (ttyS2)";
+$L['/dev/ttyUSB0_label'] = "USB2Serial (ttysUSB0)";
+$L['/dev/ttyUSB1_label'] = "USB2Serial (ttysUSB1)";

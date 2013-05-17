@@ -25,7 +25,6 @@ use Nethgui\System\PlatformInterface as Validate;
 class NutUps extends \Nethgui\Controller\AbstractController
 {
     private $models = NULL;
-    private $drivers = NULL;
     private $modes = array("master", "slave");
 
     private function readModels() 
@@ -61,8 +60,8 @@ class NutUps extends \Nethgui\Controller\AbstractController
                     for ($i=0; $i<$n; $i++) {
                         $star.="*";
                     }
-                    $this->models[] = array($driver,"$man - $mod ($star)");
-                    $this->drivers[] = $driver;
+                    $desc = "$man - $mod ($star)";
+                    $this->models[$desc] = $driver;
                 }
             }
             if (!feof($handle)) {
@@ -88,11 +87,38 @@ class NutUps extends \Nethgui\Controller\AbstractController
         }
         $this->declareParameter('status', Validate::SERVICESTATUS, array('configuration', 'ups', 'status'));
         $this->declareParameter('Password', Validate::ANYTHING, array('configuration', 'ups', 'Password'));
-        $this->declareParameter('Model', $this->createValidator()->memberOf($this->drivers), array('configuration', 'ups', 'Model'));
+        $this->declareParameter('Model', $this->createValidator()->memberOf(array_values($this->models)), array('configuration', 'ups', 'Model'));
+        $this->declareParameter('Description', $this->createValidator()->memberOf(array_keys($this->models)), array('configuration', 'ups', 'Description'));
         $this->declareParameter('Device', Validate::ANYTHING, array('configuration', 'ups', 'Device'));
         $this->declareParameter('Mode', $this->createValidator()->memberOf($this->modes), array('configuration', 'ups', 'Mode'));
         $this->declareParameter('Master', Validate::HOSTADDRESS, array('configuration', 'ups', 'Master'));
+        $this->declareParameter('Type', $this->createValidator()->memberOf(array_values(array('usb','serial'))),array());
     }
+
+    public function writeModel($value)
+    {
+        $this->parameters["Model"] = $this->models[$this->paramaters['Description']];
+        return true;
+    }
+
+   
+    public function writeDevice($value)
+    {
+        if ($this->parameters["Type"] === "usb") {
+             $this->paramaters['Device'] = 'auto';
+        }
+        return true;
+    }
+
+    public function readType()
+    {
+        if ($this->parameters["Device"] === 'auto') {
+            return 'usb';
+        } else {
+            return 'serial';
+        }
+    }
+
 
     public function prepareView(\Nethgui\View\ViewInterface $view)
     {
@@ -103,11 +129,15 @@ class NutUps extends \Nethgui\Controller\AbstractController
         }
 
         $view['statusDatasource'] = array(array('enabled',$view->translate('enabled_label')),array('disabled',$view->translate('disabled_label')));
-        $view['ModelDatasource'] =  $this->models;
-
+        $view['DescriptionDatasource'] = array_map(function($fmt) use ($view) {
+            return array($fmt, $fmt);
+        }, array_keys($this->models));
         $view['ModeDatasource'] = array_map(function($fmt) use ($view) {
             return array($fmt, $view->translate($fmt . '_label'));
         }, $this->modes);
+        $view['DeviceDatasource'] = array_map(function($fmt) use ($view) {
+            return array($fmt, $view->translate($fmt . '_label'));
+        }, array('/dev/ttyS0','/dev/ttyS1','/dev/ttyS2','/dev/ttyUSB0','/dev/ttyUSB1'));
     }
 
 

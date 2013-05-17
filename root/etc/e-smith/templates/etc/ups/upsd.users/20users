@@ -1,6 +1,7 @@
-[upsmon]
 {
     my $password = $ups{'Password'} || '';
-    $OUT.="    password = $password";
+    my $user = $ups{'User'} || 'upsmon';
+    $OUT .= "[$user]\n";
+    $OUT .= "    password = $password";
 }
-        upsmon master
+    upsmon master

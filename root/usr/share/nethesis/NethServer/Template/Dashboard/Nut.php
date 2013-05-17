@@ -32,7 +32,6 @@ if (strpos($upsstatus,"LB") !== false) {
 
 echo "<div class='nut-item'>";
 echo "<dl>";
-echo $view->header()->setAttribute('template',$T('nut_title'));
 echo "<dt>".$T('model_label')."</dt><dd>"; echo $status['ups.model']; echo "</dd>";
 echo "<dt>".$T('status_label')."</dt><dd><span style='color:$color; font-weight: bold'>"; echo $T($upsstatus_label); echo "</span></dd>";
 echo "<dt>".$T('load_label')."</dt><dd>"; echo $load; echo "/100<div id='dashboard_nut_load'></div>"; echo "</dd>";

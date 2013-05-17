@@ -2,18 +2,7 @@
 
 $L['model_label'] = 'Model';
 $L['ups_status_label'] = 'Status';
-$L['temperature_label'] = 'Temperature';
-$L['battery_chrg_label'] = 'Battery charge';
-$L['battery_volt_label'] = 'Battery voltage';
-$L['input_volt_label'] = 'Input voltage';
-$L['output_volt_label'] = 'Output voltage';
-$L['load_label'] = 'Load';
 $L['nut_title'] = 'UPS';
-$L['show_full_status_label'] = 'Show full status';
-$L['on_line_label'] = 'Online';
-$L['on_line_chrg_label'] = 'Online - Battery charging';
-$L['on_battery_label'] = 'On battery';
-$L['low_battery_label'] = 'On battery - Low battery';
 $L['enabled_label'] = 'Enable';
 $L['disabled_label'] = 'Disable';
 $L['NutUps_Title'] = 'UPS';

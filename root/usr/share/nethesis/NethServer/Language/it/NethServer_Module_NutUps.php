@@ -1,19 +1,7 @@
 <?php
 
 $L['model_label'] = 'Modello';
-$L['ups_status_label'] = 'Stato';
-$L['temperature_label'] = 'Temperatura';
-$L['battery_chrg_label'] = 'Carica batteria';
-$L['battery_volt_label'] = 'Voltaggio batteria';
-$L['input_volt_label'] = 'Voltaggio input';
-$L['output_volt_label'] = 'Votlaggio output';
-$L['load_label'] = 'Carico';
 $L['nut_title'] = 'UPS';
-$L['show_full_status_label'] = 'Visualizza stato completo';
-$L['on_line_label'] = 'Online';
-$L['on_line_chrg_label'] = 'Online - Batteria in carica';
-$L['on_battery_label'] = 'In batteria';
-$L['low_battery_label'] = 'In batteria - Batteria scarica';
 $L['enabled_label'] = 'Abilita';
 $L['disabled_label'] = 'Disabilita';
 $L['NutUps_Title'] = 'UPS';

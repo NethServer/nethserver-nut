@@ -43,7 +43,7 @@ echo "<dt>".$T('load_label')."</dt><dd>"; echo $load; echo "/100<div id='dashboa
 echo "<dt>".$T('battery_chrg_label')."</dt><dd>"; echo $battcharg; echo "/100<div id='dashboard_battery_chrg'></div>"; echo "</dd>";
 echo "<dt>".$T('battery_runtime_label')."</dt><dd>"; echo $runtime." ";  echo $T('minutes_label'); echo "</dd>";
 echo "<dt style='margin-top: 5px'>".$T('battery_volt_label')."</dt><dd style='margin-top: 5px'>"; echo $battvolt; echo "</dd>";
-echo "<dt>".$T('temperature_label')."</dt><dd>"; echo intval($status['ups.temperature']); echo "</dd>";
+echo "<dt>".$T('temperature_label')."</dt><dd>"; echo intval(@$status['ups.temperature']); echo "</dd>";
 echo "<dt>".$T('input_volt_label')."</dt><dd>"; echo $involtage; echo "</dd>";
 echo "<dt>".$T('output_volt_label')."</dt><dd>"; echo $outvoltage; echo "</dd>";
 echo "</dl>";

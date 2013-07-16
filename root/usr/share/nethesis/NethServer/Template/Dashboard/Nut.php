@@ -31,7 +31,8 @@ if (strpos($upsstatus,"LB") !== false) {
 }
 
 if (!isset($status['ups.model'])) {
-   return $T("no_info");
+   echo $T("no_info");
+   return;
 }
 
 echo "<div class='nut-item'>";

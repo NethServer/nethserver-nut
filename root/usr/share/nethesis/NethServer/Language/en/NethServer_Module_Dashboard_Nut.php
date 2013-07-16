@@ -9,6 +9,7 @@ $L['battery_runtime_label'] = 'Battery runtime';
 $L['input_volt_label'] = 'Input voltage';
 $L['output_volt_label'] = 'Output voltage';
 $L['load_label'] = 'Load';
+$L['no_info'] = 'No UPS information available';
 $L['nut_title'] = 'UPS';
 $L['show_full_status_label'] = 'Show full status';
 $L['on_line_label'] = 'Online';

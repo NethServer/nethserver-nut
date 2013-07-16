@@ -1,18 +1,19 @@
 <?php
 
 $status = $view['status'];
-$load = intval($status['ups.load']);
-$involtage = intval($status['input.voltage']);
-$outvoltage = intval($status['output.voltage']);
-$outvoltage = intval($status['output.voltage']);
-$involtage = intval($status['input.voltage']);
-$battcharg = intval($status['battery.charge']);
-$battvolt = intval($status['battery.voltage']);
-$runtime = intval($status['battery.runtime']/60);
+$load = @intval($status['ups.load']);
+$involtage = @intval($status['input.voltage']);
+$outvoltage = @intval($status['output.voltage']);
+$outvoltage = @intval($status['output.voltage']);
+$involtage = @intval($status['input.voltage']);
+$battcharg = @intval($status['battery.charge']);
+$battvolt = @intval($status['battery.voltage']);
+$runtime = @intval($status['battery.runtime']/60);
 $battvolt_min = 30;
 $battvolt_max = 60;
 
-$upsstatus = $status['ups.status'];
+$upsstatus = @$status['ups.status'];
+$upsstatus_label = "";
 $color = "green";
 if (strpos($upsstatus,"OL") !== false) {
     $upsstatus_label = "on_line_label";
@@ -29,10 +30,13 @@ if (strpos($upsstatus,"LB") !== false) {
     $color = 'red';
 }
 
+if (!isset($status['ups.model'])) {
+   return $T("no_info");
+}
 
 echo "<div class='nut-item'>";
 echo "<dl>";
-echo "<dt>".$T('model_label')."</dt><dd>"; echo $status['ups.model']; echo "</dd>";
+echo "<dt>".$T('model_label')."</dt><dd>"; echo @$status['ups.model']; echo "</dd>";
 echo "<dt>".$T('status_label')."</dt><dd><span style='color:$color; font-weight: bold'>"; echo $T($upsstatus_label); echo "</span></dd>";
 echo "<dt>".$T('load_label')."</dt><dd>"; echo $load; echo "/100<div id='dashboard_nut_load'></div>"; echo "</dd>";
 echo "<dt>".$T('battery_chrg_label')."</dt><dd>"; echo $battcharg; echo "/100<div id='dashboard_battery_chrg'></div>"; echo "</dd>";

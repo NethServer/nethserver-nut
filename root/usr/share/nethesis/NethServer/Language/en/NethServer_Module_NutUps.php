@@ -16,6 +16,7 @@ $L['Mode_slave_label'] = 'Slave';
 $L['Model_label'] = 'Model';
 $L['Device_label'] = 'Device';
 $L['Description_label'] = 'Model';
+$L['Slave_password_label'] = 'Password for slaves: ${0}';
 $L['Type_usb_label'] = 'Usb connection';
 $L['Type_serial_label'] = 'Serial connection';
 $L['/dev/ttyS0_label'] = "COM1 (ttyS0)";

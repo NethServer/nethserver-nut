@@ -7,6 +7,7 @@ $L['disabled_label'] = 'Disabilita';
 $L['NutUps_Title'] = 'UPS';
 $L['status_label'] = 'Abilita NUT UPS';
 $L['Password_label'] = 'Password';
+$L['Slave_password_label'] = 'Password per slave: ${0}';
 $L['Master_label'] = 'Indirizzo server master';
 $L['Mode_label'] = 'Modalità';
 $L['Mode_master_label'] = 'Master';

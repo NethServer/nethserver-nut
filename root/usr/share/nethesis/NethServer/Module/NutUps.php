@@ -86,7 +86,7 @@ class NutUps extends \Nethgui\Controller\AbstractController
             $this->readModels();
         }
         $this->declareParameter('status', Validate::SERVICESTATUS, array('configuration', 'ups', 'status'));
-        $this->declareParameter('Password', Validate::ANYTHING, array('configuration', 'ups', 'Password'));
+        $this->declareParameter('Password', Validate::NOTEMPTY, array('configuration', 'ups', 'Password'));
         $this->declareParameter('Model', $this->createValidator()->memberOf(array_values($this->models)), array('configuration', 'ups', 'Model'));
         $this->declareParameter('Description', $this->createValidator()->memberOf(array_keys($this->models)), array('configuration', 'ups', 'Description'));
         $this->declareParameter('Device', Validate::ANYTHING, array('configuration', 'ups', 'Device'));

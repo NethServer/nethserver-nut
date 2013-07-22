@@ -31,6 +31,7 @@ my $event = 'nethserver-nut-update';
 
 event_actions($event, qw(
       initialize-default-databases 00
+      nethserver-nut-conf 20
 ));
 
 event_templates($event, qw(

@@ -11,13 +11,14 @@ echo $view->panel()
             ->insert($view->fieldsetSwitch('Type', 'usb'))
             ->insert($view->fieldsetSwitch('Type', 'serial', $view::FIELDSETSWITCH_EXPANDABLE)
                  ->insert($view->selector('Device', $view::SELECTOR_DROPDOWN)))
+            ->insert($view->textLabel('Password')->setAttribute('template', $T('Slave_password_label')))
         )
         ->insert($view->fieldsetSwitch('Mode', 'slave', $view::FIELDSETSWITCH_EXPANDABLE)
             ->insert($view->textInput('Master'))
+            ->insert($view->textInput('Password'))
         )
     )
        
-    ->insert($view->textInput('Password'))
 ;
 
 // show submit and help buttons

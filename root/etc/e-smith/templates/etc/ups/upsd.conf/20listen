@@ -1,13 +1,1 @@
-{
-    use esmith::NetworksDB;
-
-    my $greenInterface = esmith::NetworksDB->open_ro()->green();
-    if($greenInterface) {
-        $LocalIP = $greenInterface->prop('ipaddr');
-    } else {
-        $LocalIP = '127.0.0.1';
-    }
-    $OUT.="LISTEN $LocalIP";
-
-}
-LISTEN 127.0.0.1
+LISTEN 0.0.0.0

@@ -1,0 +1,6 @@
+#! /bin/sh
+# UPS notify script.
+
+/bin/mail -s "$UPSNAME: $NOTIFYTYPE" admin <<END
+$*
+END

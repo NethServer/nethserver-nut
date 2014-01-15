@@ -126,7 +126,14 @@ SHUTDOWNCMD "/sbin/shutdown -h +0"
 # information and ideas, see pager.txt in the docs directory.
 #
 # Example:
-# NOTIFYCMD /usr/local/ups/bin/notifyme
+{
+    my $notify = $ups{'Notify'} || 'disabled';
+    if ($notify eq 'enabled') {
+        $OUT.="NOTIFYCMD /usr/libexec/nethserver/nut-notify\n";
+    } else {
+        $OUT.="# NOTIFYCMD /usr/local/ups/bin/notifyme\n";
+    }
+}
 
 # --------------------------------------------------------------------------
 # POLLFREQ <n> 
@@ -258,6 +265,20 @@ POWERDOWNFLAG /etc/killpower
 # IGNORE - Don't do anything
 #
 # If you use IGNORE, don't use any other flags on the same line.
+{
+    my $notify = $ups{'Notify'} || 'disabled';
+    if ($notify eq 'enabled') {
+        $OUT .= "
+NOTIFYFLAG ONLINE     SYSLOG+WALL+EXEC
+NOTIFYFLAG ONBATT     SYSLOG+WALL+EXEC
+NOTIFYFLAG LOWBATT    SYSLOG+WALL+EXEC
+NOTIFYFLAG REPLBATT   SYSLOG+WALL+EXEC
+NOTIFYFLAG COMMBAD    SYSLOG+WALL+EXEC
+NOTIFYFLAG NOCOMM     SYSLOG+WALL+EXEC
+        ";
+    }
+}
+
 
 # --------------------------------------------------------------------------
 # RBWARNTIME - replace battery warning time in seconds

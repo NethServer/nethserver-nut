@@ -20,6 +20,7 @@ NethServer UPS managemnt using NUT
 %setup
 
 %build
+%{makedocs}
 perl createlinks
 
 %install

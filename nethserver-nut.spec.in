@@ -37,6 +37,11 @@ echo "%doc COPYING" >> %{name}-%{version}-filelist
 %defattr(-,root,root)
 
 %changelog
+* Wed Feb 05 2014 Davide Principi <davide.principi@nethesis.it> - 1.0.6-1.ns6
+- Move admin user in LDAP DB - Feature #2492 [NethServer]
+- NUT: add option to enable mail notification - Enhancement #2291 [NethServer]
+- Update all inline help documentation - Task #1780 [NethServer]
+
 * Wed Oct 16 2013 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.5-1.ns6
 - Upsd daemon should listen on 0.0.0.0 - Enhancement #2139 
 - Db defaults: remove Runlevels prop. Refs #2067

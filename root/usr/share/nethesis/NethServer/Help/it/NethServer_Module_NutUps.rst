@@ -3,7 +3,7 @@ UPS
 ===
 
 La gestione di un gruppo di continuità (UPS - Uninterruptible Power
-Supply) collegato a NethServer è affidata a NUT (Network UPS Tools), che
+Supply) collegato al server è affidata a NUT (Network UPS Tools), che
 provvederà ad effettuare uno shutdown in caso di assenza di
 alimentazione. NUT supporta diversi modelli di gruppi di continuità,
 collegabili con apposito cavo seriale o USB.
@@ -19,7 +19,7 @@ Modalità
 
 Master
     Questa modalità va selezionata se l'UPS è collegato
-    direttamente a NethServer tramite cavo seriale o USB.
+    direttamente al server tramite cavo seriale o USB.
 
 Cerca driver per modello
     Consente di cercare un driver compatibile con il proprio modello di UPS. Dopo aver selezionato il modello dall lista, 
@@ -29,15 +29,15 @@ Driver
     I driver da utilizzare per il modello di UPS collegato.
 
 Collegamento USB
-    Selezionare questa opzione se l'UPS è collegato a NethServer tramite USB.
+    Selezionare questa opzione se l'UPS è collegato al server tramite USB.
 
 Collegamento seriale
-    Selezionare questa opzione se l'UPS è collegato a NethServer tramite cavo seriale.
+    Selezionare questa opzione se l'UPS è collegato al server tramite cavo seriale.
 
 Slave
     Questa modalità deve essere utilizzata se l'UPS non è collegato
-    direttamente a NethServer, ma ad un altro server con NUT configurato
-    in modalità Master al quale NethServer si collegherà.
+    direttamente al server, ma ad un altro server con NUT configurato
+    in modalità Master al quale il server si collegherà.
 
 Indirizzo server master
     Indirizzo IP o nome host del server master. Il client utilizzerà l'utente *UPS* per collegarsi al server master.

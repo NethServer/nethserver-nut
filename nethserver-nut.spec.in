@@ -37,6 +37,9 @@ echo "%doc COPYING" >> %{name}-%{version}-filelist
 %defattr(-,root,root)
 
 %changelog
+* Wed Feb 26 2014 Davide Principi <davide.principi@nethesis.it> - 1.0.7-1.ns6
+- Revamp web UI style - Enhancement #2656 [NethServer]
+
 * Wed Feb 05 2014 Davide Principi <davide.principi@nethesis.it> - 1.0.6-1.ns6
 - Move admin user in LDAP DB - Feature #2492 [NethServer]
 - NUT: add option to enable mail notification - Enhancement #2291 [NethServer]

@@ -28,11 +28,9 @@ Search drivers for model
 Driver
     The driver to be used for the model of UPS connected.
 
-USB Connection
-    Select this option if the UPS is connected via USB.
-
-Serial connection
-    Select this option if the UPS is connected via serial cable to the server.
+Device
+    The physical port where the UPS is connected. Inside brackets is displayed the UNIX device name, in case of USB connection
+    the device name is automatically calculated.
 
 Slave
     This mode should be used if the UPS is not connected

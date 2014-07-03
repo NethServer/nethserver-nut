@@ -28,11 +28,9 @@ Cerca driver per modello
 Driver
     I driver da utilizzare per il modello di UPS collegato.
 
-Collegamento USB
-    Selezionare questa opzione se l'UPS è collegato al server tramite USB.
-
-Collegamento seriale
-    Selezionare questa opzione se l'UPS è collegato al server tramite cavo seriale.
+Device
+    La porta fisica a cui è collegato l'UPS. Fra parentesi è riportato il nome del device UNIX, nel caso di collegamento USB
+    il nome del device è calcolato automaticamente.
 
 Slave
     Questa modalità deve essere utilizzata se l'UPS non è collegato

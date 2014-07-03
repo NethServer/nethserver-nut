@@ -19,6 +19,7 @@ $L['SearchModel_label'] = 'Search driver for model';
 $L['Slave_password_label'] = 'Password for slaves: ${0}';
 $L['Type_usb_label'] = 'Usb connection';
 $L['Type_serial_label'] = 'Serial connection';
+$L['auto_label'] = "USB (auto)";
 $L['/dev/ttyS0_label'] = "COM1 (ttyS0)";
 $L['/dev/ttyS1_label'] = "COM2 (ttyS1)";
 $L['/dev/ttyS2_label'] = "COM3 (ttyS2)";

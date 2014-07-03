@@ -17,6 +17,7 @@ $L['Device_label'] = 'Device';
 $L['SearchModel_label'] = 'Cerca driver per modello';
 $L['Type_usb_label'] = 'Collegamento USB';
 $L['Type_serial_label'] = 'Collegamento seriale';
+$L['auto_label'] = "USB (auto)";
 $L['/dev/ttyS0_label'] = "COM1 (ttyS0)";
 $L['/dev/ttyS1_label'] = "COM2 (ttyS1)";
 $L['/dev/ttyS2_label'] = "COM3 (ttyS2)";

@@ -26,6 +26,7 @@ class NutUps extends \Nethgui\Controller\AbstractController
 {
     private $models = NULL;
     private $modes = array("master", "slave");
+    private $devices = array('auto','/dev/ttyS0','/dev/ttyS1','/dev/ttyS2','/dev/ttyUSB0','/dev/ttyUSB1');
 
     private function readModels() 
     {
@@ -78,39 +79,10 @@ class NutUps extends \Nethgui\Controller\AbstractController
         $this->declareParameter('status', Validate::SERVICESTATUS, array('configuration', 'ups', 'status'));
         $this->declareParameter('Password', Validate::NOTEMPTY, array('configuration', 'ups', 'Password'));
         $this->declareParameter('Model', $this->createValidator()->memberOf(array_values($this->models)), array('configuration', 'ups', 'Model'));
-        $this->declareParameter('Device', Validate::ANYTHING, array('configuration', 'ups', 'Device'));
+        $this->declareParameter('Device', $this->createValidator()->memberOf($this->devices), array('configuration', 'ups', 'Device'));
         $this->declareParameter('Mode', $this->createValidator()->memberOf($this->modes), array('configuration', 'ups', 'Mode'));
         $this->declareParameter('Master', Validate::HOSTADDRESS, array('configuration', 'ups', 'Master'));
-        $this->declareParameter('Type', $this->createValidator()->memberOf(array_values(array('usb','serial'))),array());
     }
-
-    public function readDevice($value)
-    {
-        return $value;
-    }
-   
-    public function writeDevice($value)
-    {
-        if ($this->parameters["Type"] === "usb") {
-             $this->paramaters['Device'] = 'auto';
-        }
-        return true;
-    }
-
-    public function writeType($value)
-    {
-        return true;
-    }
-
-    public function readType()
-    {
-        if ($this->parameters["Device"] === 'auto') {
-            return 'usb';
-        } else {
-            return 'serial';
-        }
-    }
-
 
     public function prepareView(\Nethgui\View\ViewInterface $view)
     {
@@ -127,7 +99,7 @@ class NutUps extends \Nethgui\Controller\AbstractController
         }, $this->modes);
         $view['DeviceDatasource'] = array_map(function($fmt) use ($view) {
             return array($fmt, $view->translate($fmt . '_label'));
-        }, array('/dev/ttyS0','/dev/ttyS1','/dev/ttyS2','/dev/ttyUSB0','/dev/ttyUSB1'));
+        }, $this->devices);
     }
 
 

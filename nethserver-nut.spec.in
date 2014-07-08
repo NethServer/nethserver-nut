@@ -37,6 +37,9 @@ echo "%doc COPYING" >> %{name}-%{version}-filelist
 %defattr(-,root,root)
 
 %changelog
+* Tue Jul 08 2014 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.8-1.ns6
+- Fix web interface: device not saved - Bug #2800
+
 * Wed Feb 26 2014 Davide Principi <davide.principi@nethesis.it> - 1.0.7-1.ns6
 - Revamp web UI style - Enhancement #2656 [NethServer]
 

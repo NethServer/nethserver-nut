@@ -34,6 +34,10 @@ class Nut extends \Nethgui\Controller\AbstractController
 
     private function readStatus() 
     {
+        $status = $this->getPlatform()->getDatabase('configuration')->getProp('ups','status');
+        if ($status == 'disabled') {
+            return;
+        }
         $mode = $this->getPlatform()->getDatabase('configuration')->getProp('ups','Mode');
         $ups = $this->getPlatform()->getDatabase('configuration')->getProp('ups','Ups');
         if (!$ups) {
@@ -43,7 +47,12 @@ class Nut extends \Nethgui\Controller\AbstractController
             $cmd = "/usr/bin/upsc $ups@localhost";
         } else {
             $server = $this->getPlatform()->getDatabase('configuration')->getProp('ups','Master');
-            $cmd = "/usr/bin/upsc $ups@$server";
+            $exitc = $this->getPlatform()->exec("/usr/bin/nc $server 3849")->getExitCode();
+            if ($exitc == 0) {
+                $cmd = "/usr/bin/upsc $ups@$server";
+            } else {
+                return;
+            }
         }
 
         $output = $this->getPlatform()->exec($cmd)->getOutputArray();

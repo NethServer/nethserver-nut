@@ -30,8 +30,6 @@ class Nut extends \Nethgui\Controller\AbstractController
 
     public $sortId = 30;
  
-    private $status = "";
-
     private function readStatus() 
     {
         $status = $this->getPlatform()->getDatabase('configuration')->getProp('ups','status');
@@ -40,34 +38,32 @@ class Nut extends \Nethgui\Controller\AbstractController
         }
         $mode = $this->getPlatform()->getDatabase('configuration')->getProp('ups','Mode');
         $ups = $this->getPlatform()->getDatabase('configuration')->getProp('ups','Ups');
-        if (!$ups) {
+
+        if ( ! $ups) {
             $ups = "UPS";
         }
-        if ($mode === "master") {
-            $cmd = "/usr/bin/upsc $ups@localhost";
+
+        if($mode === 'master') {
+            $server = 'localhost';
         } else {
             $server = $this->getPlatform()->getDatabase('configuration')->getProp('ups','Master');
-            $exitc = $this->getPlatform()->exec("/usr/bin/nc $server 3493")->getExitCode();
-            if ($exitc == 0) {
-                $cmd = "/usr/bin/upsc $ups@$server";
-            } else {
-                return;
-            }
         }
 
-        $output = $this->getPlatform()->exec($cmd)->getOutputArray();
-        foreach ($output as $line) {
-            $tmp = explode(": ",$line);
-            $this->status[$tmp[0]] = $tmp[1];
-        }
+        $process = $this->getPlatform()->exec('/usr/bin/nc -w 1 -z ${1} 3493 &>/dev/null && /usr/bin/upsc ${2}', array($server, "${ups}@${server}"));
+
+        $status = array();
+        if($process->getExitCode() === 0) {
+            foreach ($process->getOutputArray() as $line) {
+                $tmp = explode(": ",$line);
+                $status[$tmp[0]] = $tmp[1];
+            }
+        } 
+        return $status;
     }
 
     public function prepareView(\Nethgui\View\ViewInterface $view)
     {
-        if (!$this->status) {
-            $this->readStatus();
-        }
-
-        $view['status'] = $this->status;
+        parent::prepareView($view);
+        $view['status'] = $this->readStatus();
     }
 }

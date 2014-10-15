@@ -39,6 +39,7 @@ event_templates($event, qw(
                  /etc/ups/upsd.users
                  /etc/ups/upsd.conf
                  /etc/ups/ups.conf
+                 /etc/sysconfig/ups
 ));
 
 event_services($event, 'ups' => 'restart');
@@ -58,6 +59,7 @@ event_templates($event, qw(
                  /etc/ups/upsd.users
                  /etc/ups/upsd.conf
                  /etc/ups/ups.conf
+                 /etc/sysconfig/ups
 ));
 
 

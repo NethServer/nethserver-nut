@@ -47,7 +47,7 @@ class Nut extends \Nethgui\Controller\AbstractController
             $cmd = "/usr/bin/upsc $ups@localhost";
         } else {
             $server = $this->getPlatform()->getDatabase('configuration')->getProp('ups','Master');
-            $exitc = $this->getPlatform()->exec("/usr/bin/nc $server 3849")->getExitCode();
+            $exitc = $this->getPlatform()->exec("/usr/bin/nc $server 3493")->getExitCode();
             if ($exitc == 0) {
                 $cmd = "/usr/bin/upsc $ups@$server";
             } else {

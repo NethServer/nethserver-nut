@@ -5,6 +5,7 @@ $L['nut_title'] = 'UPS';
 $L['enabled_label'] = 'Abilita';
 $L['disabled_label'] = 'Disabilita';
 $L['NutUps_Title'] = 'UPS';
+$L['NutUps_Description'] = 'Configura il gruppo statico di continuità (Uninterruptible Power Supply)';
 $L['status_label'] = 'Abilita NUT UPS';
 $L['Password_label'] = 'Password';
 $L['Slave_password_label'] = 'Password per slave: ${0}';

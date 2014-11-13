@@ -6,6 +6,7 @@ $L['nut_title'] = 'UPS';
 $L['enabled_label'] = 'Enable';
 $L['disabled_label'] = 'Disable';
 $L['NutUps_Title'] = 'UPS';
+$L['NutUps_Description'] = 'Configure uninterruptible power supply (UPS) unit';
 $L['status_label'] = 'Enable NUT UPS';
 $L['ups_status_label'] = 'UPS status';
 $L['Password_label'] = 'Password';

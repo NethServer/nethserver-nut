@@ -1,6 +1,6 @@
 Summary: NethServer NUT configuration
 Name: nethserver-nut
-Version: 1.0.9
+Version: 1.0.10
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 

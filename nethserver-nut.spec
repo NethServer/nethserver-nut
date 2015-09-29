@@ -1,6 +1,6 @@
 Summary: NethServer NUT configuration
 Name: nethserver-nut
-Version: 1.0.10
+Version: 1.0.11
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
@@ -37,6 +37,10 @@ echo "%doc COPYING" >> %{name}-%{version}-filelist
 %defattr(-,root,root)
 
 %changelog
+* Tue Sep 29 2015 Davide Principi <davide.principi@nethesis.it> - 1.0.11-1
+- Make Italian language pack optional - Enhancement #3265 [NethServer]
+- nethserver-devbox replacements - Feature #3009 [NethServer]
+
 * Wed Oct 15 2014 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.10-1.ns6
 - Fix dashboard error when configured as slave - Bug #2842
 

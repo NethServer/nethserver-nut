@@ -30,9 +30,13 @@ if (strpos($upsstatus,"LB") !== false) {
     $color = 'red';
 }
 
-if (!isset($status['ups.model'])) {
+if (!isset($upsstatus)) {
    echo $T("no_info");
    return;
+}
+
+if (!isset($status['ups.model'])) {
+   $status['ups.model'] = '-';
 }
 
 echo "<div class='nut-item'>";

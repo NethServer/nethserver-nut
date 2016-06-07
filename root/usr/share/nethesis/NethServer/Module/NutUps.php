@@ -31,7 +31,7 @@ class NutUps extends \Nethgui\Controller\AbstractController
     private function readModels() 
     {
         $this->models = array();
-        $handle = @fopen("/usr/share/driver.list", "r");
+        $handle = @fopen("/usr/share/nut/driver.list", "r");
         if ($handle) {
             while (($buffer = fgets($handle, 4096)) !== false) {
                 if ($buffer[0] == "#") {

@@ -127,7 +127,7 @@ SHUTDOWNCMD "/sbin/shutdown -h +0"
 #
 # Example:
 {
-    my $notify = $ups{'Notify'} || 'disabled';
+    my $notify = $nut-monitor{'Notify'} || 'disabled';
     if ($notify eq 'enabled') {
         $OUT.="NOTIFYCMD /usr/libexec/nethserver/nut-notify\n";
     } else {
@@ -266,7 +266,7 @@ POWERDOWNFLAG /etc/killpower
 #
 # If you use IGNORE, don't use any other flags on the same line.
 {
-    my $notify = $ups{'Notify'} || 'disabled';
+    my $notify = $nut-monitor{'Notify'} || 'disabled';
     if ($notify eq 'enabled') {
         $OUT .= "
 NOTIFYFLAG ONLINE     SYSLOG+WALL+EXEC

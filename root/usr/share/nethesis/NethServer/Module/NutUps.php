@@ -76,12 +76,12 @@ class NutUps extends \Nethgui\Controller\AbstractController
         if (! $this->models) {
             $this->readModels();
         }
-        $this->declareParameter('status', Validate::SERVICESTATUS, array('configuration', 'ups', 'status'));
-        $this->declareParameter('Password', Validate::NOTEMPTY, array('configuration', 'ups', 'Password'));
-        $this->declareParameter('Model', $this->createValidator()->memberOf(array_values($this->models)), array('configuration', 'ups', 'Model'));
-        $this->declareParameter('Device', $this->createValidator()->memberOf($this->devices), array('configuration', 'ups', 'Device'));
-        $this->declareParameter('Mode', $this->createValidator()->memberOf($this->modes), array('configuration', 'ups', 'Mode'));
-        $this->declareParameter('Master', Validate::HOSTADDRESS, array('configuration', 'ups', 'Master'));
+        $this->declareParameter('status', Validate::SERVICESTATUS, array('configuration', 'nut-server', 'status'));
+        $this->declareParameter('Password', Validate::NOTEMPTY, array('configuration', 'nut-server', 'Password'));
+        $this->declareParameter('Model', $this->createValidator()->memberOf(array_values($this->models)), array('configuration', 'nut-server', 'Model'));
+        $this->declareParameter('Device', $this->createValidator()->memberOf($this->devices), array('configuration', 'nut-server', 'Device'));
+        $this->declareParameter('Mode', $this->createValidator()->memberOf($this->modes), array('configuration', 'nut-server', 'Mode'));
+        $this->declareParameter('Master', Validate::HOSTADDRESS, array('configuration', 'nut-monitor', 'Master'));
     }
 
     public function prepareView(\Nethgui\View\ViewInterface $view)

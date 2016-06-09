@@ -30,7 +30,7 @@ use esmith::ConfigDB;
 # Initialize NUT password if not set
 
 my $confdb = esmith::ConfigDB->open;
-my $nut = $confdb->get('ups') or exit(1);
+my $nut = $confdb->get('nut-server') or exit(1);
 my $prop = $nut->prop('Password') || '';
 if ($prop eq '') {
     my $rand = '';

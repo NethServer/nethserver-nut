@@ -1,6 +1,6 @@
 {
-    my $password = $ups{'Password'} || '';
-    my $user = $ups{'User'} || 'upsmon';
+    my $password = $nut-server{'Password'} || '';
+    my $user = $nut-server{'User'} || 'upsmon';
     $OUT .= "[$user]\n";
     $OUT .= "    password = $password";
 }

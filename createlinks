@@ -39,10 +39,13 @@ event_templates($event, qw(
                  /etc/ups/upsd.users
                  /etc/ups/upsd.conf
                  /etc/ups/ups.conf
-                 /etc/sysconfig/ups
+                 /etc/ups/nut.conf
 ));
 
-event_services($event, 'ups' => 'restart');
+event_services($event, qw(
+               nut-server restart
+               nut-monitor restart
+));
 
 #
 # nethserver-nut-save event
@@ -59,8 +62,11 @@ event_templates($event, qw(
                  /etc/ups/upsd.users
                  /etc/ups/upsd.conf
                  /etc/ups/ups.conf
-                 /etc/sysconfig/ups
+                 /etc/ups/nut.conf
 ));
 
 
-event_services($event, 'ups' => 'restart');
+event_services($event, qw(
+               nut-server restart
+               nut-monitor restart
+));

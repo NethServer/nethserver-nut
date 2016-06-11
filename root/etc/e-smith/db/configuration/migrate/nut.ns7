@@ -1,20 +1,17 @@
 {
-use esmith::ConfigDB;
-$DB = esmith::ConfigDB->open(${DB_FILENAME});
     #
     # migrate ns6 ups props into nut-server and nut-monitor
     #
 
-    my $status = $DB->get_prop('ups', 'status');
-    my $serverStatus = $DB->get_prop('ups', 'Mode') || 'master';
-    if($status) {
+    my $status = $DB->get_prop('ups', 'status') || '';
+    if($status ne '') {
+        my $serverStatus = (($DB->get_prop('ups', 'Mode') || 'master') eq 'master') ? 'enabled' : 'disabled';
         my $oldRecord = $DB->get('ups');
         my %props = $oldRecord->props;
-#        $props{'type'} = 'service';
-        $props{'status'} = ($status eq 'enabled' && $serverStatus eq 'master') ? 'enabled' : 'disabled';
+        $props{'status'} = ($status eq 'disabled') ? 'disabled' : $serverStatus;
         $DB->new_record('nut-monitor', {
                         'type' => 'service',
-                        'status' => ($props{'status'} eq 'enabled' || $serverStatus eq 'slave') ? 'enabled' : 'disabled',
+                        'status' => $status,
                         'Master' => $props{'Master'},
                         'Notify' => $props{'Notify'}
         });

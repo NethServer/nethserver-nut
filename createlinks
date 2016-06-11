@@ -53,10 +53,6 @@ event_services($event, qw(
 
 $event = 'nethserver-nut-save';
 
-event_actions($event, qw(
-      initialize-default-databases 00
-));
-
 event_templates($event, qw(
                  /etc/ups/upsmon.conf
                  /etc/ups/upsd.users

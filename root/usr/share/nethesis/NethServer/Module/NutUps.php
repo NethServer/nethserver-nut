@@ -84,6 +84,14 @@ class NutUps extends \Nethgui\Controller\AbstractController
         $this->declareParameter('Master', Validate::HOSTADDRESS, array('configuration', 'nut-monitor', 'Master'));
     }
 
+    public function bind(\Nethgui\Controller\RequestInterface $request)
+    {
+        parent::bind($request);        
+        if ($request->getParameter('status') === 'disabled') {
+            $this->parameters['Mode'] = 'disabled';
+        }
+    }
+
     public function prepareView(\Nethgui\View\ViewInterface $view)
     {
         parent::prepareView($view);

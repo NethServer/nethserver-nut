@@ -1,7 +1,7 @@
 {
-    $ups = $nut-server{'Ups'} || 'UPS';
-    $driver = $nut-server{'Model'} || '';
-    $device = $nut-server{'Device'} || '';
+    $ups = ${'nut-server'}{'Ups'} || 'UPS';
+    $driver = ${'nut-server'}{'Model'} || '';
+    $device = ${'nut-server'}{'Device'} || '';
     
     $OUT.="[$ups]\n";
     $OUT.="driver = $driver\n";

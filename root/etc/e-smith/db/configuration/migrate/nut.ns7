@@ -16,6 +16,7 @@
                         'Notify' => $props{'Notify'}
         });
         delete $props{'Master'};
+        delete $props{'Mode'};
         delete $props{'Notify'};
         $DB->new_record('nut-server', \%props);
         $oldRecord->delete();

@@ -36,14 +36,14 @@ class Nut extends \Nethgui\Controller\AbstractController
         if ($status == 'disabled') {
             return;
         }
-        $mode = $this->getPlatform()->getDatabase('configuration')->getProp('nut-server','Mode');
+        $mode = $this->getPlatform()->getDatabase('configuration')->getProp('nut-server','status');
         $ups = $this->getPlatform()->getDatabase('configuration')->getProp('nut-server','Ups');
 
         if ( ! $ups) {
             $ups = "UPS";
         }
 
-        if($mode === 'master') {
+        if($mode === 'enabled') {
             $server = 'localhost';
         } else {
             $server = $this->getPlatform()->getDatabase('configuration')->getProp('nut-monitor','Master');

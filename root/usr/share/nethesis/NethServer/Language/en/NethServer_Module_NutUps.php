@@ -11,7 +11,6 @@ $L['status_label'] = 'Enable NUT UPS';
 $L['ups_status_label'] = 'UPS status';
 $L['Password_label'] = 'Password';
 $L['Master_label'] = 'Master server address';
-$L['Mode_label'] = 'Mode';
 $L['Model_label'] = 'Driver';
 $L['Device_label'] = 'Device';
 $L['SearchModel_label'] = 'Search driver for model';

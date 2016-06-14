@@ -26,8 +26,8 @@
 #  You MUST NOT use spaces around the equal sign!
 
 {
-    $mode = ${'nut-server'}{'Mode'} || 'master';
-    if ($mode eq 'master') {
+    $mode = ${'nut-server'}{'status'} || 'disabled';
+    if ($mode eq 'enabled') {
         $OUT.="MODE=netserver";
     } else {
         $OUT.="MODE=netclient";

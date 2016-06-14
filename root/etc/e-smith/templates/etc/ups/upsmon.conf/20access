@@ -1,11 +1,14 @@
 {
     my $ip = '';
+    my $mode = '';
     my $pass = ${'nut-server'}{'Password'} || ' ';
-    my $mode = ${'nut-server'}{'Mode'} || 'master';
-    if ($mode eq 'master') {
+    my $status = ${'nut-server'}{'status'} || 'disabled';
+    if ($status eq 'enabled') {
         $ip = '127.0.0.1';
+        $mode = 'master';
     } else {
         $ip = ${'nut-monitor'}{'Master'} || '';
+        $mode = 'slave';
     }
 
     $OUT.="MONITOR UPS\@$ip 1 upsmon $pass $mode";

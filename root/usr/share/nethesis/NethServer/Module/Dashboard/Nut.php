@@ -49,7 +49,7 @@ class Nut extends \Nethgui\Controller\AbstractController
             $server = $this->getPlatform()->getDatabase('configuration')->getProp('nut-monitor','Master');
         }
 
-        $process = $this->getPlatform()->exec('/usr/bin/nc -w 1 -z ${1} 3493 &>/dev/null && /usr/bin/upsc ${2}', array($server, "${ups}@${server}"));
+        $process = $this->getPlatform()->exec('timeout 0.4 /usr/bin/upsc ${@}', array("${ups}@${server}"));
 
         $status = array();
         if($process->getExitCode() === 0) {

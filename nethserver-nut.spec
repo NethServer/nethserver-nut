@@ -1,6 +1,6 @@
 Summary: NethServer NUT configuration
 Name: nethserver-nut
-Version: 1.0.12
+Version: 1.1.0
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
@@ -37,6 +37,9 @@ echo "%doc COPYING" >> %{name}-%{version}-filelist
 %defattr(-,root,root)
 
 %changelog
+* Tue Jun 14 2016 Davide Principi <davide.principi@nethesis.it> - 1.1.0-1
+- Collectd 5 support. Feature #3403 [NethServer]
+
 * Fri May 27 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.12-1
 - Dashboard/UPS: no info for some UPS models - Enhancement #3397 [NethServer]
 

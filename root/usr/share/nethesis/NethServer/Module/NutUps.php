@@ -25,7 +25,6 @@ use Nethgui\System\PlatformInterface as Validate;
 class NutUps extends \Nethgui\Controller\AbstractController
 {
     private $models = NULL;
-    private $modes = array("master", "slave");
     private $devices = array('auto','/dev/ttyS0','/dev/ttyS1','/dev/ttyS2','/dev/ttyUSB0','/dev/ttyUSB1');
 
     private function readModels() 
@@ -76,11 +75,11 @@ class NutUps extends \Nethgui\Controller\AbstractController
         if (! $this->models) {
             $this->readModels();
         }
-        $this->declareParameter('status', Validate::SERVICESTATUS, array('configuration', 'nut-server', 'status'));
+        $this->declareParameter('status', Validate::SERVICESTATUS, array('configuration', 'nut-monitor', 'status'));
         $this->declareParameter('Password', Validate::NOTEMPTY, array('configuration', 'nut-server', 'Password'));
         $this->declareParameter('Model', $this->createValidator()->memberOf(array_values($this->models)), array('configuration', 'nut-server', 'Model'));
         $this->declareParameter('Device', $this->createValidator()->memberOf($this->devices), array('configuration', 'nut-server', 'Device'));
-        $this->declareParameter('Mode', $this->createValidator()->memberOf($this->modes), array('configuration', 'nut-server', 'Mode'));
+        $this->declareParameter('Mode', Validate::SERVICESTATUS, array('configuration', 'nut-server', 'status'));
         $this->declareParameter('Master', Validate::HOSTADDRESS, array('configuration', 'nut-monitor', 'Master'));
     }
 
@@ -102,9 +101,6 @@ class NutUps extends \Nethgui\Controller\AbstractController
 
         $view['statusDatasource'] = array(array('enabled',$view->translate('enabled_label')),array('disabled',$view->translate('disabled_label')));
         $view['models'] = $this->models;
-        $view['ModeDatasource'] = array_map(function($fmt) use ($view) {
-            return array($fmt, $view->translate($fmt . '_label'));
-        }, $this->modes);
         $view['DeviceDatasource'] = array_map(function($fmt) use ($view) {
             return array($fmt, $view->translate($fmt . '_label'));
         }, $this->devices);

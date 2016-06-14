@@ -4,19 +4,17 @@ echo $view->header()->setAttribute('template', $T('NutUps_Title'));
 
 // add simple panel
 echo $view->panel()
-    ->insert($view->selector('status'))
-    ->insert($view->fieldset()->setAttribute('template',$T('Mode_label'))
-        ->insert($view->fieldsetSwitch('Mode', 'master', $view::FIELDSETSWITCH_EXPANDABLE)
+    ->insert($view->fieldsetSwitch('status', 'enabled', $view::FIELDSETSWITCH_EXPANDABLE | $view::FIELDSETSWITCH_CHECKBOX)->setAttribute('uncheckedValue', 'disabled')
+        ->insert($view->fieldsetSwitch('Mode', 'enabled', $view::FIELDSETSWITCH_EXPANDABLE)
             ->insert($view->textInput('SearchModel'))
             ->insert($view->textInput('Model'))
             ->insert($view->selector('Device', $view::SELECTOR_DROPDOWN))
             ->insert($view->textLabel('Password')->setAttribute('template', $T('Slave_password_label')))
         )
-        ->insert($view->fieldsetSwitch('Mode', 'slave', $view::FIELDSETSWITCH_EXPANDABLE)
+        ->insert($view->fieldsetSwitch('Mode', 'disabled', $view::FIELDSETSWITCH_EXPANDABLE)
             ->insert($view->textInput('Master'))
             ->insert($view->textInput('Password'))
-        )
-    )
+    ))
 ;
 
 // show submit and help buttons

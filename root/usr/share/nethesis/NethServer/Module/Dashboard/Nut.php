@@ -32,24 +32,24 @@ class Nut extends \Nethgui\Controller\AbstractController
  
     private function readStatus() 
     {
-        $status = $this->getPlatform()->getDatabase('configuration')->getProp('ups','status');
+        $status = $this->getPlatform()->getDatabase('configuration')->getProp('nut-monitor','status');
         if ($status == 'disabled') {
             return;
         }
-        $mode = $this->getPlatform()->getDatabase('configuration')->getProp('ups','Mode');
-        $ups = $this->getPlatform()->getDatabase('configuration')->getProp('ups','Ups');
+        $mode = $this->getPlatform()->getDatabase('configuration')->getProp('nut-server','status');
+        $ups = $this->getPlatform()->getDatabase('configuration')->getProp('nut-server','Ups');
 
         if ( ! $ups) {
             $ups = "UPS";
         }
 
-        if($mode === 'master') {
+        if($mode === 'enabled') {
             $server = 'localhost';
         } else {
-            $server = $this->getPlatform()->getDatabase('configuration')->getProp('ups','Master');
+            $server = $this->getPlatform()->getDatabase('configuration')->getProp('nut-monitor','Master');
         }
 
-        $process = $this->getPlatform()->exec('/usr/bin/nc -w 1 -z ${1} 3493 &>/dev/null && /usr/bin/upsc ${2}', array($server, "${ups}@${server}"));
+        $process = $this->getPlatform()->exec('timeout 0.4 /usr/bin/upsc ${@}', array("${ups}@${server}"));
 
         $status = array();
         if($process->getExitCode() === 0) {

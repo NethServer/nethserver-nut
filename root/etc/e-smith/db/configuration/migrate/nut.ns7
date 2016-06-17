@@ -1,0 +1,26 @@
+{
+    #
+    # migrate ns6 ups props into nut-server and nut-monitor
+    #
+
+    my $status = $DB->get_prop('ups', 'status') || '';
+    if($status ne '') {
+        my $serverStatus = (($DB->get_prop('ups', 'Mode') || 'master') eq 'master') ? 'enabled' : 'disabled';
+        my $oldRecord = $DB->get('ups');
+        my %props = $oldRecord->props;
+        $props{'status'} = ($status eq 'disabled') ? 'disabled' : $serverStatus;
+        $DB->new_record('nut-monitor', {
+                        'type' => 'service',
+                        'status' => $status,
+                        'Master' => $props{'Master'},
+                        'Notify' => $props{'Notify'}
+        });
+        delete $props{'Master'};
+        delete $props{'Mode'};
+        delete $props{'Notify'};
+        $DB->new_record('nut-server', \%props);
+        $oldRecord->delete();
+    }
+
+    '';
+}

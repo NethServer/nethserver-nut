@@ -40,6 +40,7 @@ event_templates($event, qw(
                  /etc/ups/upsd.conf
                  /etc/ups/ups.conf
                  /etc/sysconfig/ups
+                 /etc/collectd.d/nut_nethserver.conf
 ));
 
 event_services($event, 'ups' => 'restart');
@@ -60,6 +61,7 @@ event_templates($event, qw(
                  /etc/ups/upsd.conf
                  /etc/ups/ups.conf
                  /etc/sysconfig/ups
+                 /etc/collectd.d/nut_nethserver.conf
 ));
 
 

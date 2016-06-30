@@ -1,0 +1,15 @@
+# If the UPS is locally attached collect data
+{
+    $status = $ups{'status'} || 'disabled';
+    $mode = $ups{'Mode'} || 'master';
+    if ($mode eq 'master' && $status eq 'enabled') {
+        $OUT = <<EOF
+LoadPlugin "nut"
+<Plugin "nut">
+  UPS "ups\@localhost"
+</Plugin> 
+EOF
+    } else {
+        $OUT.="# no local ups";
+    }
+}

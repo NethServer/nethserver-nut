@@ -35,6 +35,7 @@ echo "%doc COPYING" >> %{name}-%{version}-filelist
 
 %files -f %{name}-%{version}-filelist
 %defattr(-,root,root)
+%ghost %attr(0644, root, root) %{_sysconfdir}/collectd.d/nut_nethserver.conf
 
 %changelog
 * Tue Jun 14 2016 Davide Principi <davide.principi@nethesis.it> - 1.1.0-1

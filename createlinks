@@ -40,11 +40,13 @@ event_templates($event, qw(
                  /etc/ups/upsd.conf
                  /etc/ups/ups.conf
                  /etc/ups/nut.conf
+                 /etc/collectd.d/nut_nethserver.conf
 ));
 
 event_services($event, qw(
                nut-server restart
                nut-monitor restart
+               collectd restart
 ));
 
 #
@@ -59,10 +61,12 @@ event_templates($event, qw(
                  /etc/ups/upsd.conf
                  /etc/ups/ups.conf
                  /etc/ups/nut.conf
+                 /etc/collectd.d/nut_nethserver.conf
 ));
 
 
 event_services($event, qw(
                nut-server restart
                nut-monitor restart
+               collectd restart
 ));

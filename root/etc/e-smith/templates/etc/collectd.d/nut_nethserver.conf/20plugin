@@ -1,0 +1,13 @@
+# If the UPS is locally attached collect data
+{
+    $status = ${'nut-server'}{'status'} || 'disabled';
+    if ($status eq 'enabled') {
+        $OUT = <<EOF
+<Plugin "nut">
+  UPS "ups\@localhost"
+</Plugin>
+EOF
+    } else {
+        $OUT.="# no local ups";
+    }
+}

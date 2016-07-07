@@ -1,6 +1,6 @@
 Summary: NethServer NUT configuration
 Name: nethserver-nut
-Version: 1.0.12
+Version: 1.2.0
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
@@ -40,6 +40,9 @@ rm -rf %{buildroot}
 +%ghost %attr(0644, root, root) %{_sysconfdir}/collectd.d/nut_nethserver.conf
 
 %changelog
+* Thu Jul 07 2016 Stefano Fancello <stefano.fancello@nethesis.it> - 1.2.0-1
+- First NS7 release
+
 * Fri May 27 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.12-1
 - Dashboard/UPS: no info for some UPS models - Enhancement #3397 [NethServer]
 

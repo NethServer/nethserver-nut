@@ -1,13 +1,13 @@
 [main]
 host = https://www.transifex.com
 
-[nethserver.NutUps]
+[nethserver-v6.NutUps]
 source_file = root/usr/share/nethesis/NethServer/Language/en/NethServer_Module_NutUps.php
 source_lang = en
 type = PHP_ALT_ARRAY
 
 
-[nethserver.Dashboard_Nut]
+[nethserver-v6.Dashboard_Nut]
 source_file = root/usr/share/nethesis/NethServer/Language/en/NethServer_Module_Dashboard_Nut.php
 source_lang = en
 type = PHP_ALT_ARRAY

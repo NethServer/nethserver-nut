@@ -66,3 +66,4 @@ event_templates($event, qw(
 
 
 event_services($event, 'ups' => 'restart');
+event_services($event, 'collectd' => 'restart');

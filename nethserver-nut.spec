@@ -1,6 +1,6 @@
 Summary: NethServer NUT configuration
 Name: nethserver-nut
-Version: 1.1.0
+Version: 1.1.1
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
@@ -38,6 +38,9 @@ echo "%doc COPYING" >> %{name}-%{version}-filelist
 %ghost %attr(0644, root, root) %{_sysconfdir}/collectd.d/nut_nethserver.conf
 
 %changelog
+* Wed Jul 13 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.1.1-1
+- collectd - monitor only locally connected ups - Enhancement #3413 [NethServer]
+
 * Tue Jun 14 2016 Davide Principi <davide.principi@nethesis.it> - 1.1.0-1
 - Collectd 5 support. Feature #3403 [NethServer]
 

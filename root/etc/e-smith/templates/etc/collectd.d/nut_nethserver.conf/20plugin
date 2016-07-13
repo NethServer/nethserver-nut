@@ -2,7 +2,8 @@
 {
     $status = $ups{'status'} || 'disabled';
     $mode = $ups{'Mode'} || 'master';
-    if ($mode eq 'master' && $status eq 'enabled') {
+    $collectd_nut = (-e "/usr/lib64/collectd/nut.so");
+    if ($mode eq 'master' && $status eq 'enabled' && $collectd_nut) {
         $OUT = <<EOF
 LoadPlugin "nut"
 <Plugin "nut">

@@ -40,7 +40,7 @@ event_templates($event, qw(
                  /etc/ups/upsd.conf
                  /etc/ups/ups.conf
                  /etc/ups/nut.conf
-                 /etc/collectd.d/nut_nethserver.conf
+                 /etc/collectd.d/nut.conf
 ));
 
 event_services($event, qw(
@@ -61,7 +61,7 @@ event_templates($event, qw(
                  /etc/ups/upsd.conf
                  /etc/ups/ups.conf
                  /etc/ups/nut.conf
-                 /etc/collectd.d/nut_nethserver.conf
+                 /etc/collectd.d/nut.conf
 ));
 
 

@@ -4,6 +4,7 @@
     $collectd_nut = (-e "/usr/lib64/collectd/nut.so");
     if ($status eq 'enabled' && $collectd_nut) {
         $OUT = <<EOF
+LoadPlugin "nut"
 <Plugin "nut">
   UPS "ups\@localhost"
 </Plugin>

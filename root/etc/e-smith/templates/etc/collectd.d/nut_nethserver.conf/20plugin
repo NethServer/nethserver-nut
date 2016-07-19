@@ -1,7 +1,8 @@
 # If the UPS is locally attached collect data
 {
     $status = ${'nut-server'}{'status'} || 'disabled';
-    if ($status eq 'enabled') {
+    $collectd_nut = (-e "/usr/lib64/collectd/nut.so");
+    if ($status eq 'enabled' && $collectd_nut) {
         $OUT = <<EOF
 <Plugin "nut">
   UPS "ups\@localhost"

@@ -1,6 +1,6 @@
 Summary: NethServer NUT configuration
 Name: nethserver-nut
-Version: 1.2.1
+Version: 1.3.0
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
@@ -40,6 +40,9 @@ rm -rf %{buildroot}
 %ghost %attr(0644, root, root) %{_sysconfdir}/collectd.d/nut_nethserver.conf
 
 %changelog
+* Thu Jul 21 2016 Stefano Fancello <stefano.fancello@nethesis.it> - 1.3.0-1
+- collectd - monitor only locally connected ups - NethServer/dev#5049
+
 * Fri Jul 08 2016 Stefano Fancello <stefano.fancello@nethesis.it> - 1.2.1-1
 - Fix .spec typo
 

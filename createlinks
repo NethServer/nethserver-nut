@@ -70,3 +70,7 @@ event_services($event, qw(
                nut-monitor restart
                collectd restart
 ));
+
+event_actions($event, qw(
+               firewall-adjust 60
+));

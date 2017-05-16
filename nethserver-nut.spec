@@ -1,6 +1,6 @@
 Summary: NethServer NUT configuration
 Name: nethserver-nut
-Version: 1.3.0
+Version: 1.3.1
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
@@ -40,6 +40,9 @@ rm -rf %{buildroot}
 %ghost %attr(0644, root, root) %{_sysconfdir}/collectd.d/nut_nethserver.conf
 
 %changelog
+* Tue May 16 2017 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.3.1-1
+- NUT UPS master unreachable from clients - Bug NethServer/dev#5282
+
 * Thu Jul 21 2016 Stefano Fancello <stefano.fancello@nethesis.it> - 1.3.0-1
 - collectd - monitor only locally connected ups - NethServer/dev#5049
 

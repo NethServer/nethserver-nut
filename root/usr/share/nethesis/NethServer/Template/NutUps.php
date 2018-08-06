@@ -13,7 +13,7 @@ echo $view->panel()
         )
         ->insert($view->fieldsetSwitch('Mode', 'disabled', $view::FIELDSETSWITCH_EXPANDABLE)
             ->insert($view->textInput('Master'))
-            ->insert($view->textInput('Password'))
+            ->insert($view->textInput('Password', $view::TEXTINPUT_PASSWORD))
     ))
 ;
 

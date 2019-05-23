@@ -1,6 +1,8 @@
 {
     my $ip = '';
     my $mode = '';
+    my $user = ${'nut-server'}{'User'} || 'upsmon';
+    my $ups = ${'nut-server'}{'Ups'} || 'UPS';
     my $pass = ${'nut-server'}{'Password'} || ' ';
     my $status = ${'nut-server'}{'status'} || 'disabled';
     if ($status eq 'enabled') {
@@ -11,5 +13,5 @@
         $mode = 'slave';
     }
 
-    $OUT.="MONITOR UPS\@$ip 1 upsmon $pass $mode";
+    $OUT.="MONITOR $ups\@$ip 1 $user $pass $mode";
 }

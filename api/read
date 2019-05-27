@@ -1,0 +1,81 @@
+#!/usr/bin/python
+
+import simplejson
+import sys
+import subprocess
+
+def read_models():
+    lines = [line.rstrip('\n') for line in open('/usr/share/nut/driver.list')]
+    models = []
+
+    for line in lines:
+        driver_params = line.split('\t')
+
+        if len(driver_params) < 6:
+            continue
+
+        # skip comments
+        if line[0] == '#':
+            continue
+
+        driver = driver_params[5].replace('"', '')
+        manufacturer = driver_params[0].replace('"', '')
+        model_name = driver_params[3].replace('"', '')
+        support_level_num = int(driver_params[2].replace('"', ''))
+        support_level_stars = ''
+
+        for i in range(support_level_num):
+            support_level_stars += '*'
+        
+        description = manufacturer + ' - ' + model_name + ' (' + support_level_stars + ')'
+        model_json_string = '{ "model_name": "%s", "manufacturer": "%s", "driver": "%s", "description": "%s", "support_level": "%d" }' % \
+            (model_name, manufacturer, driver, description, support_level_num)
+        model_json = simplejson.loads(model_json_string)
+        models.append(model_json)
+
+    return models
+
+def read_config(config_name):
+    bash_command = "/sbin/e-smith/config getjson %s" % config_name
+    process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE)
+    output, error = process.communicate()
+    config_json = simplejson.loads(output)
+    return config_json
+
+    # lines = output.splitlines()
+    # line_num = 0 ####
+    # config_string = '{ '
+
+    # for line in lines:
+    #     # skip the first line of the output
+    #     if line_num == 0:
+    #         line_num += 1
+    #         continue
+
+    #     line = line.strip()
+    #     key_value = line.split('=')
+
+    #     key = key_value[0]
+    #     value = key_value[1]
+    #     config_line = ''
+
+    #     if line_num > 1:
+    #         config_line += ', '
+
+    #     config_line += '"%s": "%s"' % (key, value)
+    #     config_string += config_line
+    #     line_num += 1
+
+    # config_string += ' }'
+    # config_json = simplejson.loads(config_string)
+    # return config_json
+
+try:
+    models = read_models()
+    nut_server_config = read_config('nut-server')
+    nut_monitor_config = read_config('nut-monitor')
+    output = simplejson.dumps({'configuration': { 'models': models, 'nut-server': nut_server_config, 'nut-monitor': nut_monitor_config } })
+    print (output)
+except Exception, e:
+    print simplejson.dumps({ 'error':"%s" % e })
+    sys.exit(1)

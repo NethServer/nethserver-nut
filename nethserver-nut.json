@@ -1,0 +1,23 @@
+{
+    "id": "nethserver-nut",
+    "name": "NethServer NUT configuration",
+    "summary": "NethServer UPS managemnt using NUT",
+    "description": "NethServer UPS managemnt using NUT",
+    "url": "",
+    "homepage": "https://github.com/NethServer/nethserver-nut",
+    "provides": ["nethserver-nut"],
+    "release": {
+        "version": "1.0.0"
+    },
+    "tags": ["tag1", "tag2", "tag3"],
+    "license": "GPL-3.0",
+    "bugs": {
+        "url": "https://github.com/NethServer/dev/issues"
+    },
+    "author": {
+        "name": "Author's name of NethServer NUT configuration",
+        "url": "https://github.com/NethServer/nethserver-nut",
+        "email": "Author's email of NethServer NUT configuration"
+    },
+    "icon": "icon.png"
+}

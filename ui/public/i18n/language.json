@@ -1,0 +1,40 @@
+{
+  "actions": "Actions",
+  "users": "Users",
+  "add_user": "Add user",
+  "edit_user": "Edit user",
+  "delete_user": "Delete user",
+  "first_name": "First name",
+  "last_name": "Last name",
+  "date_of_birth": "Date of birth",
+  "cancel": "Cancel",
+  "save": "Save",
+  "edit": "Edit",
+  "firstname_validation": "First name must be a string without digits",
+  "lastname_validation": "Last name must be a string without digits",
+  "dob_validation": "Date of birth must be a valid date in the past",
+  "delete_user": "Delete user",
+  "delete": "Delete",
+  "delete_user_question": "Delete user?",
+  "delete_user_description": "This action will permanently delete the user. This cannot be undone",
+
+  "settings": {
+    "title": "Settings"
+  },
+  "jails":{
+    "title": "Jails"
+  },
+  "about": {
+    "title": "About",
+    "website": "Web site",
+    "bug_tracker": "Bug tracker"
+  },
+  "logs": {
+    "title": "Logs",
+    "follow": "Follow",
+    "stop_follow": "Stop"
+  },
+  "dashboard":{
+    "title": "Dashboard"
+  }
+}

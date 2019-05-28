@@ -5,4 +5,11 @@
 # download langs from transifex
 
 # tar directory
-cd ui; tar cvzf ../nethserver-nut.tar.gz *
+set -e
+
+pushd ui
+npm install
+npm run build
+popd
+
+tar -C ui/dist -c -z -f nethserver-nut-cockpit.tar.gz .

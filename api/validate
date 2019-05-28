@@ -24,7 +24,9 @@ require_once("/usr/libexec/nethserver/api/lib/Helpers.php");
 
 $data = readInput();
 
-$nut_server_validator = new LegacyValidator($data['configuration']['nut-server']['props']);
+$nut_server_validator = new LegacyValidator($data['configuration']['nut_server']['props']);
+$devices = array('auto','/dev/ttyS0','/dev/ttyS1','/dev/ttyS2','/dev/ttyUSB0','/dev/ttyUSB1');
+$validator = new Validator();
 
 // "status": "disabled",
 // "access": "green",
@@ -39,12 +41,12 @@ $nut_server_validator->declareParameter('status', Validate::SERVICESTATUS);
 $nut_server_validator->declareParameter('access', Validate::NOTEMPTY);
 $nut_server_validator->declareParameter('User', Validate::USERNAME);
 $nut_server_validator->declareParameter('TCPPort', Validate::PORTNUMBER);
-$nut_server_validator->declareParameter('Device', Validate::NOTEMPTY);
+$nut_server_validator->declareParameter('Device', $validator->memberOf($devices));
 $nut_server_validator->declareParameter('Model', Validate::NOTEMPTY);
-$nut_server_validator->declareParameter('Password', Validate::ANYTHING);
+$nut_server_validator->declareParameter('Password', Validate::NOTEMPTY);
 $nut_server_validator->declareParameter('Ups', Validate::NOTEMPTY);
 
-$nut_monitor_validator = new LegacyValidator($data['configuration']['nut-monitor']['props']);
+$nut_monitor_validator = new LegacyValidator($data['configuration']['nut_monitor']['props']);
 
 // "status": "disabled",
 // "Master": "",
@@ -52,7 +54,7 @@ $nut_monitor_validator = new LegacyValidator($data['configuration']['nut-monitor
 
 $nut_monitor_validator->declareParameter('status', Validate::SERVICESTATUS);
 $nut_monitor_validator->declareParameter('Master', Validate::ANYTHING);
-$nut_monitor_validator->declareParameter('Notify', Validate::NOTEMPTY);
+$nut_monitor_validator->declareParameter('Notify', Validate::SERVICESTATUS);
 
 # Validate the input
 

@@ -74,7 +74,7 @@ try:
     models = read_models()
     nut_server_config = read_config('nut-server')
     nut_monitor_config = read_config('nut-monitor')
-    output = simplejson.dumps({'configuration': { 'models': models, 'nut-server': nut_server_config, 'nut-monitor': nut_monitor_config } })
+    output = simplejson.dumps({'configuration': { 'models': models, 'nut_server': nut_server_config, 'nut_monitor': nut_monitor_config } })
     print (output)
 except Exception, e:
     print simplejson.dumps({ 'error':"%s" % e })

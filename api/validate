@@ -22,11 +22,45 @@
 
 require_once("/usr/libexec/nethserver/api/lib/Helpers.php");
 
+function readModels() {
+    $models = array();
+    $handle = @fopen("/usr/share/nut/driver.list", "r");
+    if ($handle) {
+        while (($buffer = fgets($handle, 4096)) !== false) {
+            if ($buffer[0] == "#") {
+                continue;
+            }
+            $tmp = explode("\t",trim($buffer));
+            if ($tmp[0]) {
+                if (!isset($tmp[5]) ) {
+                    continue;
+                }
+                $driver = str_replace('"','',$tmp[5]);
+                
+                $man = str_replace('"','',$tmp[0]);
+                $mod = str_replace('"','',$tmp[3]);
+                $n = (int)str_replace('"','',$tmp[2]);
+                $star = "";
+                for ($i=0; $i<$n; $i++) {
+                    $star.="*";
+                }
+                $desc = "$man - $mod ($star)";
+                $models[$desc] = $driver;
+            }
+        }
+        if (!feof($handle)) {
+            $models = array();
+        }
+        fclose($handle);
+    }
+    return $models;
+}
+
 $data = readInput();
 
 $nut_server_validator = new LegacyValidator($data['configuration']['nut_server']['props']);
 $devices = array('auto','/dev/ttyS0','/dev/ttyS1','/dev/ttyS2','/dev/ttyUSB0','/dev/ttyUSB1');
-$validator = new Validator();
+$models = readModels();
 
 // "status": "disabled",
 // "access": "green",
@@ -41,8 +75,8 @@ $nut_server_validator->declareParameter('status', Validate::SERVICESTATUS);
 $nut_server_validator->declareParameter('access', Validate::NOTEMPTY);
 $nut_server_validator->declareParameter('User', Validate::USERNAME);
 $nut_server_validator->declareParameter('TCPPort', Validate::PORTNUMBER);
-$nut_server_validator->declareParameter('Device', $validator->memberOf($devices));
-$nut_server_validator->declareParameter('Model', Validate::NOTEMPTY);
+$nut_server_validator->declareParameter('Device', $nut_server_validator->createValidator()->memberOf($devices));
+$nut_server_validator->declareParameter('Model', $nut_server_validator->createValidator()->memberOf($models));
 $nut_server_validator->declareParameter('Password', Validate::NOTEMPTY);
 $nut_server_validator->declareParameter('Ups', Validate::NOTEMPTY);
 
@@ -53,7 +87,7 @@ $nut_monitor_validator = new LegacyValidator($data['configuration']['nut_monitor
 // "Notify": "disabled"
 
 $nut_monitor_validator->declareParameter('status', Validate::SERVICESTATUS);
-$nut_monitor_validator->declareParameter('Master', Validate::ANYTHING);
+$nut_monitor_validator->declareParameter('Master', $nut_monitor_validator->createValidator()->orValidator($nut_monitor_validator->createValidator(Validate::HOSTADDRESS), $nut_monitor_validator->createValidator()->equalTo('')));
 $nut_monitor_validator->declareParameter('Notify', Validate::SERVICESTATUS);
 
 # Validate the input

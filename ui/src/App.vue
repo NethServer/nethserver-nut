@@ -57,3 +57,9 @@
     </div>
 </div>
 </template>
+
+<style>
+.divider {
+  border-bottom: 1px solid #d1d1d1;
+}
+</style>

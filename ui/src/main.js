@@ -24,6 +24,10 @@ import Router from 'vue-router'
 import VueToggleButton from 'vue-js-toggle-button';
 import DocInfo from "./directives/DocInfo.vue";
 import VueGoodTable from "vue-good-table";
+import _ from 'lodash';
+
+import "v-suggestions/dist/v-suggestions.css";
+import VueSuggestions from 'v-suggestions'
 
 import App from './App.vue'
 import Dashboard from './views/Dashboard.vue'
@@ -37,6 +41,7 @@ Vue.mixin(UtilService)
 Vue.config.productionTip = false
 Vue.use(VueToggleButton);
 Vue.component('doc-info', DocInfo);
+Vue.component('suggestions', VueSuggestions)
 Vue.use(VueGoodTable);
 
 Vue.use(VueI18n)

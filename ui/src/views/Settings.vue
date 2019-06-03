@@ -49,12 +49,35 @@
                 for="textInput-modal-markup"
               >{{$t('settings.model')}}</label>
               <div class="col-sm-5">
-                <input 
-                  type="search" 
-                  v-model="viewConfig.model" 
-                  class="form-control"
-                  :placeholder="$t('search')+'...'"
+                <suggestions
+                  v-model="viewConfig.model"
+                  :options="autoOptions"
+                  :onInputChange="filterModel"
+                  :onItemSelected="selectModel"
                 >
+                  <div slot="item" slot-scope="props" class="single-item">
+                    <span>
+                      {{props.item.name}}
+                      <b class="mg-left-5">{{props.item.manufacturer}}</b>
+                      -
+                      {{props.item.model_name}}
+                      <i class="mg-left-5">({{props.item.support_level}}*)</i>
+                    </span>
+                  </div>
+                </suggestions>
+                <!-- <input 
+                  type="text" 
+                  v-model="viewConfig.model" 
+                  class="combobox form-control"
+                  :placeholder="$t('search')+'...'"
+                  @change="modelSelected()"
+                  list="models"
+                >
+                <datalist id="models">
+                  <option v-for="(model, index) in matchingModels" v-bind:key="index" :value="model.description">
+                    {{ model.description }}
+                  </option>
+                </datalist> -->
               </div>
             </div>
             <!-- Driver -->
@@ -64,28 +87,16 @@
                 for="textInput-modal-markup"
               >{{$t('settings.driver')}}</label>
               <div class="col-sm-5">
-                <!-- <select
+                <select
                   required
                   type="text"
                   class="combobox form-control"
-                  :disabled="cboDriverDisabled"
                   v-model="viewConfig.driver"
                 >
-                </select> -->
-                <input 
-                  type="text" 
-                  required
-                  list="drivers" 
-                  class="combobox form-control"
-                  v-model="viewConfig.driver"
-                  :disabled="cboDriverDisabled"
-                >
-                <datalist id="drivers">
-                  <option>Volvo</option>
-                  <option>Saab</option>
-                  <option>Mercedes</option>
-                  <option>Audi</option>
-                </datalist>
+                  <option v-for="(driver, index) in driversForModel" v-bind:key="index" :value="driver">
+                    {{ driver }}
+                  </option>
+                </select>
               </div>
             </div>
             <!-- Device -->
@@ -184,13 +195,23 @@
               >{{$t('settings.password')}}</label>
               <div class="col-sm-5">
                 <input 
-                  type="password" 
+                  :type="passwordVisible ? 'text' : 'password'"
                   class="form-control"
                   v-model="viewConfig.password"
                 >
               </div>
+              <div class="col-sm-2 adjust-index">
+                  <button 
+                    tabindex="-1" 
+                    type="button" 
+                    class="btn btn-primary"
+                    @click="togglePasswordVisibility()"
+                  >
+                    <span :class="[!passwordVisible ? 'fa fa-eye' : 'fa fa-eye-slash']"></span>
+                  </button>
+              </div>
             </div>
-
+            <!-- Toggle password visibility -->
             <div class="form-group">
               <legend
                 class="fields-section-header-pf col-sm-1"
@@ -206,6 +227,7 @@
               </legend>
             </div>
 
+            <!-- Advanced options -->
             <div
               class="form-group"
               v-if="showAdvancedOptions"
@@ -268,11 +290,17 @@ export default {
   data() {
     return {
       configLoaded: false,
-      cboDriverDisabled: true,
+      // cboDriverDisabled: true, // todo useless?
       models: [],
+      driversForModel: [],
       nutServerConfig: null,
       nutMonitorConfig: null,
       showAdvancedOptions: false,
+      passwordVisible: false,
+      matchingModels: [],
+      autoOptions: {
+        inputClass: "form-control"
+      },
       viewConfig: {
         enableNutUps: false,
         mode: '',
@@ -317,11 +345,7 @@ export default {
             ctx.viewConfig.upsName = ctx.nutServerConfig.Ups;
             ctx.viewConfig.upsUser = ctx.nutServerConfig.User;
             ctx.viewConfig.password = ctx.nutServerConfig.Password;
-
             ctx.configLoaded = true
-            console.log('ctx.nutServerConfig: ' + ctx.nutServerConfig)  /* eslint-disable-line no-console */
-
-
           } catch (e) {
             console.error(e) /* eslint-disable-line no-console */
           }
@@ -337,8 +361,65 @@ export default {
     toggleAdvancedOptions() {
       this.showAdvancedOptions = !this.showAdvancedOptions;
     },
+    togglePasswordVisibility() {
+      this.passwordVisible = !this.passwordVisible;
+    },
 
+  //   modelSelected() { // todo remove
+  //     this.driversForModel = [];
+  //     // var driverString = this.models.find(model => model.description === this.viewConfig.model); //// todo
+  //     // var driverString = 'driver1 or driver2'; //// todo
+  //     var driverString = this.models_drivers[this.viewConfig.model];
+  //     if (typeof driverString !== 'undefined') {
+  //       if (driverString.toLowerCase().indexOf(' or ') == -1) {
+  //         // there's only one driver for the model selected
+  //         this.driversForModel.push(driverString);
+  //       } else {
+  //         // multiple drivers for the model selected
+  //         var drivers = driverString.split(' or ');
+  //         for (let driver of drivers) {
+  //           this.driversForModel.push(driver);
+  //         }
+  //       }
+  //       if (this.driversForModel.length > 0) {
+  //         this.driver = this.driversForModel[0];
+  //       }
+  //     }
+  //   },
+  //   searchModel: _.debounce(function(searchValue) {
+  //     this.matchingModels = [];
+  //     if (searchValue.length > 0) {
+  //       this.matchingModels = this.models.filter(function(model) {
+  //         return (model.description.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1);
+  //       });
+  //       // this.matchingModels = [this.models[1], this.models[2]]; //// todo
+  //     }
+  //     // console.log(this.matchingModels); // todo 
+  //     // this.matchingModels.$forceUpdate();
+  //   }, 200)
+  // },
+
+    filterModel(query) {
+      if (query.trim().length === 0) {
+        return null;
+      }
+      return this.models.filter(function(model) {
+        return (model.description.toLowerCase().includes(query.toLowerCase()));
+      });
+    },
+    selectModel(item) {
+      this.driversForModel = item.driver; // todo item.driverS
+      if (this.driversForModel.length > 0) {
+          this.driver = this.driversForModel[0];
+        }
+    },
   }
+  // watch: { // todo remove
+  //   // 'viewConfig.model': this.searchModel(searchValue)
+  //   'viewConfig.model'(searchValue){
+  //     this.searchModel(searchValue);
+  //   }
+  // }
 };
 </script>
 

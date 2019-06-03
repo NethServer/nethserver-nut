@@ -4,8 +4,22 @@ import simplejson
 import sys
 import subprocess
 
+class UpsModel:
+    def __init__(self, description, model_name, manufacturer, support_level, drivers):
+        self.description = description
+        self.model_name = model_name
+        self.manufacturer = manufacturer
+        self.support_level = support_level
+        self.drivers = set([])
+        self.add_drivers(drivers)
+        
+    def add_drivers(self, drivers):
+        for driver in drivers:
+            self.drivers.add(driver)
+
 def read_models():
     lines = [line.rstrip('\n') for line in open('/usr/share/nut/driver.list')]
+    models_drivers = {}
     models = []
 
     for line in lines:
@@ -18,7 +32,9 @@ def read_models():
         if line[0] == '#':
             continue
 
-        driver = driver_params[5].replace('"', '')
+        driver_string = driver_params[5].replace('"', '').replace("'", "")
+        drivers = driver_string.split(" or ")
+
         manufacturer = driver_params[0].replace('"', '')
         model_name = driver_params[3].replace('"', '')
         support_level_num = int(driver_params[2].replace('"', ''))
@@ -28,8 +44,20 @@ def read_models():
             support_level_stars += '*'
         
         description = manufacturer + ' - ' + model_name + ' (' + support_level_stars + ')'
-        model_json_string = '{ "model_name": "%s", "manufacturer": "%s", "driver": "%s", "description": "%s", "support_level": "%d" }' % \
-            (model_name, manufacturer, driver, description, support_level_num)
+
+        # some models in /usr/share/nut/driver.list are duplicated or have multiple drivers
+        if not description in models_drivers:
+            ups_model = UpsModel(description, model_name, manufacturer, support_level_num, drivers)
+            models_drivers[description] = ups_model
+        else:
+            ups_model = models_drivers[description]
+        
+        ups_model.add_drivers(drivers)
+
+    for description, ups_model in models_drivers.iteritems():
+        model_json_string = '{ "model_name": "%s", "manufacturer": "%s", "drivers": "%s", "description": "%s", "support_level": "%d" }' % \
+            (ups_model.model_name, ups_model.manufacturer, list(ups_model.drivers), ups_model.description, ups_model.support_level)
+
         model_json = simplejson.loads(model_json_string)
         models.append(model_json)
 
@@ -41,34 +69,6 @@ def read_config(config_name):
     output, error = process.communicate()
     config_json = simplejson.loads(output)
     return config_json
-
-    # lines = output.splitlines()
-    # line_num = 0 ####
-    # config_string = '{ '
-
-    # for line in lines:
-    #     # skip the first line of the output
-    #     if line_num == 0:
-    #         line_num += 1
-    #         continue
-
-    #     line = line.strip()
-    #     key_value = line.split('=')
-
-    #     key = key_value[0]
-    #     value = key_value[1]
-    #     config_line = ''
-
-    #     if line_num > 1:
-    #         config_line += ', '
-
-    #     config_line += '"%s": "%s"' % (key, value)
-    #     config_string += config_line
-    #     line_num += 1
-
-    # config_string += ' }'
-    # config_json = simplejson.loads(config_string)
-    # return config_json
 
 try:
     models = read_models()

@@ -61,11 +61,11 @@
                       <b class="mg-left-5">{{props.item.manufacturer}}</b>
                       -
                       {{props.item.model_name}}
-                      <i class="mg-left-5">({{props.item.support_level}}*)</i>
+                      <i class="mg-left-5">(<span v-for="i in parseInt(props.item.support_level)" v-bind:key="i">*</span>)</i>
                     </span>
                   </div>
                 </suggestions>
-                <!-- <input 
+                <!-- <input                                      props.item.support_level
                   type="text" 
                   v-model="viewConfig.model" 
                   class="combobox form-control"
@@ -92,11 +92,19 @@
                   type="text"
                   class="combobox form-control"
                   v-model="viewConfig.driver"
+                  v-if="modelTyped"
                 >
                   <option v-for="(driver, index) in driversForModel" v-bind:key="index" :value="driver">
                     {{ driver }}
                   </option>
                 </select>
+                <input 
+                  type="input" 
+                  class="form-control"
+                  v-model="viewConfig.driver"
+                  v-if="!modelTyped"
+                  :disabled="!modelTyped"
+                >
               </div>
             </div>
             <!-- Device -->
@@ -113,11 +121,11 @@
                   v-model="viewConfig.device"
                 >
                   <option value="auto">{{$t('settings.device_auto')}}</option>
-                  <option value="ttyS0">{{$t('settings.device_ttyS0')}}</option>
-                  <option value="ttyS1">{{$t('settings.device_ttyS1')}}</option>
-                  <option value="ttyS2">{{$t('settings.device_ttyS2')}}</option>
-                  <option value="ttyUSB0">{{$t('settings.device_ttyUSB0')}}</option>
-                  <option value="ttyUSB1">{{$t('settings.device_ttyUSB1')}}</option>
+                  <option value="/dev/ttyS0">{{$t('settings.device_ttyS0')}}</option>
+                  <option value="/dev/ttyS1">{{$t('settings.device_ttyS1')}}</option>
+                  <option value="/dev/ttyS2">{{$t('settings.device_ttyS2')}}</option>
+                  <option value="/dev/ttyUSB0">{{$t('settings.device_ttyUSB0')}}</option>
+                  <option value="/dev/ttyUSB1">{{$t('settings.device_ttyUSB1')}}</option>
                 </select>
               </div>
             </div>
@@ -140,6 +148,16 @@
                   disabled
                 >
               </div>
+              <!-- Copy UPS name -->
+              <div class="col-sm-2 adjust-index">
+                <button
+                  type="button" class="btn btn-primary"
+                  v-clipboard:copy="viewConfig.upsName"
+                  v-clipboard:success="onCopyUpsNameSuccess"
+                >{{$t('copy')}}
+                </button>
+                <span v-if="upsNameCopied" class="fa fa-check green copy-success"></span>
+              </div>
             </div>
             <!-- UPS user -->
             <div class="form-group">
@@ -154,6 +172,16 @@
                   v-model="viewConfig.upsUser"
                   disabled
                 >
+              </div>
+              <!-- Copy UPS user -->
+              <div class="col-sm-2 adjust-index">
+                <button
+                  type="button" class="btn btn-primary"
+                  v-clipboard:copy="viewConfig.upsUser"
+                  v-clipboard:success="onCopyUpsUserSuccess"
+                >{{$t('copy')}}
+                </button>
+                <span v-if="upsUserCopied" class="fa fa-check green copy-success"></span>
               </div>
             </div>
             <!-- Password for slaves -->
@@ -170,11 +198,21 @@
                   disabled
                 >
               </div>
+              <!-- Copy password for slaves -->
+              <div class="col-sm-2 adjust-index">
+                <button
+                  type="button" class="btn btn-primary"
+                  v-clipboard:copy="viewConfig.password"
+                  v-clipboard:success="onCopyPasswordForSlavesSuccess"
+                >{{$t('copy')}}  
+                </button>
+                <span v-if="passwordForSlavesCopied" class="fa fa-check green copy-success"></span>
+              </div>
             </div>
           </div>
           <div v-if="viewConfig.mode === 'client'">
             <!-- Master server address -->
-            <div class="form-group">
+            <div class="form-group" v-bind:class="{ 'has-error': showErrorMaster }">
               <label 
                 class="col-sm-2 control-label" 
                 for="textInput-modal-markup"
@@ -185,10 +223,11 @@
                   class="form-control"
                   v-model="viewConfig.master"
                 >
+                <span class="help-block" v-if="showErrorMaster">{{$t('settings.master_validation')}}</span>
               </div>
             </div>
             <!-- Password -->
-            <div class="form-group">
+            <div class="form-group" v-bind:class="{ 'has-error': showErrorPassword }">
               <label 
                 class="col-sm-2 control-label" 
                 for="textInput-modal-markup"
@@ -199,7 +238,9 @@
                   class="form-control"
                   v-model="viewConfig.password"
                 >
+                <span class="help-block" v-if="showErrorPassword">{{$t('settings.password_validation')}}</span>
               </div>
+              <!-- Toggle password visibility -->
               <div class="col-sm-2 adjust-index">
                   <button 
                     tabindex="-1" 
@@ -211,7 +252,8 @@
                   </button>
               </div>
             </div>
-            <!-- Toggle password visibility -->
+
+            <!-- Advanced options -->
             <div class="form-group">
               <legend
                 class="fields-section-header-pf col-sm-1"
@@ -226,14 +268,12 @@
                 >{{$t('advanced_options')}}</a>
               </legend>
             </div>
-
-            <!-- Advanced options -->
             <div
               class="form-group"
               v-if="showAdvancedOptions"
             >
               <!-- UPS name -->
-              <div class="form-group">
+              <div class="form-group" v-bind:class="{ 'has-error': showErrorUpsName }">
                 <label 
                   class="col-sm-2 control-label" 
                   for="textInput-modal-markup"
@@ -244,10 +284,11 @@
                     class="form-control"
                     v-model="viewConfig.upsName"
                   >
+                  <span class="help-block" v-if="showErrorUpsName">{{$t('settings.ups_name_validation')}}</span>
                 </div>
               </div>
               <!-- UPS user -->
-              <div class="form-group">
+              <div class="form-group" v-bind:class="{ 'has-error': showErrorUpsUser }">
                 <label 
                   class="col-sm-2 control-label" 
                   for="textInput-modal-markup"
@@ -258,6 +299,7 @@
                     class="form-control"
                     v-model="viewConfig.upsUser"
                   >
+                  <span class="help-block" v-if="showErrorUpsUser">{{$t('settings.ups_user_validation')}}</span>
                 </div>
               </div>
             </div>
@@ -271,7 +313,7 @@
             for="textInput-modal-markup"
           ></label>
           <div class="col-sm-5">
-            <button class="btn btn-primary" type="submit">{{$t('save')}}</button>
+            <button class="btn btn-primary" type="button" v-on:click="btSaveClick">{{$t('save')}}</button>
           </div>
         </div>
       </form>
@@ -290,7 +332,6 @@ export default {
   data() {
     return {
       configLoaded: false,
-      // cboDriverDisabled: true, // todo useless?
       models: [],
       driversForModel: [],
       nutServerConfig: null,
@@ -298,9 +339,17 @@ export default {
       showAdvancedOptions: false,
       passwordVisible: false,
       matchingModels: [],
+      modelTyped: false,
       autoOptions: {
         inputClass: "form-control"
       },
+      showErrorMaster: false,
+      showErrorPassword: false,
+      showErrorUpsName: false,
+      showErrorUpsUser: false,
+      upsNameCopied: false,
+      upsUserCopied: false,
+      passwordForSlavesCopied: false,
       viewConfig: {
         enableNutUps: false,
         mode: '',
@@ -332,7 +381,7 @@ export default {
             ctx.nutMonitorConfig = success.configuration.nut_monitor.props;
 
             // update view settings
-            ctx.viewConfig.enableNutUps = ctx.nutMonitorConfig.Status;
+            ctx.viewConfig.enableNutUps = ctx.nutMonitorConfig.status === 'enabled' ? true : false;
             ctx.viewConfig.master = ctx.nutMonitorConfig.Master;
             
             if (ctx.viewConfig.master) {
@@ -345,7 +394,8 @@ export default {
             ctx.viewConfig.upsName = ctx.nutServerConfig.Ups;
             ctx.viewConfig.upsUser = ctx.nutServerConfig.User;
             ctx.viewConfig.password = ctx.nutServerConfig.Password;
-            ctx.configLoaded = true
+            ctx.configLoaded = true;
+            ctx.modelTyped = false;
           } catch (e) {
             console.error(e) /* eslint-disable-line no-console */
           }
@@ -364,41 +414,6 @@ export default {
     togglePasswordVisibility() {
       this.passwordVisible = !this.passwordVisible;
     },
-
-  //   modelSelected() { // todo remove
-  //     this.driversForModel = [];
-  //     // var driverString = this.models.find(model => model.description === this.viewConfig.model); //// todo
-  //     // var driverString = 'driver1 or driver2'; //// todo
-  //     var driverString = this.models_drivers[this.viewConfig.model];
-  //     if (typeof driverString !== 'undefined') {
-  //       if (driverString.toLowerCase().indexOf(' or ') == -1) {
-  //         // there's only one driver for the model selected
-  //         this.driversForModel.push(driverString);
-  //       } else {
-  //         // multiple drivers for the model selected
-  //         var drivers = driverString.split(' or ');
-  //         for (let driver of drivers) {
-  //           this.driversForModel.push(driver);
-  //         }
-  //       }
-  //       if (this.driversForModel.length > 0) {
-  //         this.driver = this.driversForModel[0];
-  //       }
-  //     }
-  //   },
-  //   searchModel: _.debounce(function(searchValue) {
-  //     this.matchingModels = [];
-  //     if (searchValue.length > 0) {
-  //       this.matchingModels = this.models.filter(function(model) {
-  //         return (model.description.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1);
-  //       });
-  //       // this.matchingModels = [this.models[1], this.models[2]]; //// todo
-  //     }
-  //     // console.log(this.matchingModels); // todo 
-  //     // this.matchingModels.$forceUpdate();
-  //   }, 200)
-  // },
-
     filterModel(query) {
       if (query.trim().length === 0) {
         return null;
@@ -408,20 +423,123 @@ export default {
       });
     },
     selectModel(item) {
-      this.driversForModel = item.driver; // todo item.driverS
+      this.viewConfig.model = item.description
+      this.driversForModel = item.drivers;
       if (this.driversForModel.length > 0) {
-          this.driver = this.driversForModel[0];
-        }
+        this.viewConfig.driver = this.driversForModel[0];
+      }
+      this.modelTyped = true;
     },
+    btSaveClick() {
+      this.showErrorMaster = false;
+      this.showErrorPassword = false;
+      this.showErrorUpsName = false;
+      this.showErrorUpsUser = false;
+      var configObj = {
+        "configuration": {
+          "nut_server": {
+            "props": {
+              "status": this.nutServerConfig.status,
+              "access": this.nutServerConfig.access,
+              "User": this.viewConfig.upsUser,
+              "TCPPort": this.nutServerConfig.TCPPort,
+              "Device": this.viewConfig.device,
+              "Model": this.viewConfig.driver,
+              "Password": this.viewConfig.password,
+              "Ups": this.viewConfig.upsName
+            }
+          },
+          "nut_monitor": {
+            "props": {
+              "status": this.viewConfig.enableNutUps? "enabled" : "disabled",
+              "Master": this.viewConfig.mode === 'client' ? this.viewConfig.master : '',
+              "Notify": this.nutMonitorConfig.Notify
+            }
+          }
+        }
+      }
+      var context = this;
+      nethserver.exec(
+          ["nethserver-nut/validate"],
+          configObj,
+          null,
+          function () {
+            // success
+            nethserver.notifications.success = context.$i18n.t(
+              "settings.configuration_saved"
+            );
+            nethserver.notifications.error = context.$i18n.t(
+              "settings.configuration_failed"
+            );
+            // update values
+            nethserver.exec(
+              ["nethserver-nut/update"],
+              configObj,
+              function(stream) {
+                console.info("nut-update", stream); /* eslint-disable-line no-console */
+              },
+              function () {
+                // success
+                context.getConfig();
+              },
+              function (error) {
+                console.error(error); /* eslint-disable-line no-console */
+              }
+            );
+          },
+          function (error, data) {
+            try {
+              var errorData = JSON.parse(data);
+              for (var e in errorData.attributes) {
+                var attr = errorData.attributes[e]
+                var param = attr.parameter;
+                if (param === 'Master') {
+                  context.showErrorMaster = true;
+                } else if (param === 'Password') {
+                  context.showErrorPassword = true;
+                } else if (param === 'Ups') {
+                  context.showErrorUpsName = true;
+                } else if (param === 'User') {
+                  context.showErrorUpsUser = true;
+                }
+              }
+            } catch (e) {
+              console.error(e) /* eslint-disable-line no-console */
+            }
+          }
+      );
+    },
+    onCopyUpsNameSuccess: function (e) {
+      this.upsNameCopied = true;
+      var ctx = this;
+      setTimeout(function() {
+        ctx.upsNameCopied = false;
+      }, 2000);
+    },
+    onCopyUpsUserSuccess: function (e) {
+      this.upsUserCopied = true;
+      var ctx = this;
+      setTimeout(function() {
+        ctx.upsUserCopied = false;
+      }, 2000);
+    },
+    onCopyPasswordForSlavesSuccess: function (e) {
+      this.passwordForSlavesCopied = true;
+      var ctx = this;
+      setTimeout(function() {
+        ctx.passwordForSlavesCopied = false;
+      }, 2000);
+    }
   }
-  // watch: { // todo remove
-  //   // 'viewConfig.model': this.searchModel(searchValue)
-  //   'viewConfig.model'(searchValue){
-  //     this.searchModel(searchValue);
-  //   }
-  // }
 };
 </script>
 
-<style>
+<style scoped>
+.copy-success {
+  margin-left: 10px;
+}
+
+.green {
+  color: #3f9c35;
+}
 </style>

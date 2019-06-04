@@ -24,7 +24,8 @@ import Router from 'vue-router'
 import VueToggleButton from 'vue-js-toggle-button';
 import DocInfo from "./directives/DocInfo.vue";
 import VueGoodTable from "vue-good-table";
-import _ from 'lodash';
+// import _ from 'lodash';
+import VueClipboard from 'vue-clipboard2'
 
 import "v-suggestions/dist/v-suggestions.css";
 import VueSuggestions from 'v-suggestions'
@@ -43,6 +44,7 @@ Vue.use(VueToggleButton);
 Vue.component('doc-info', DocInfo);
 Vue.component('suggestions', VueSuggestions)
 Vue.use(VueGoodTable);
+Vue.use(VueClipboard)
 
 Vue.use(VueI18n)
 const i18n = new VueI18n();

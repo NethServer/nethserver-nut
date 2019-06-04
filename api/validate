@@ -35,7 +35,8 @@ function readModels() {
                 if (!isset($tmp[5]) ) {
                     continue;
                 }
-                $driver = str_replace('"','',$tmp[5]);
+                $driver_string = str_replace('"','',$tmp[5]);
+                $driver_list = explode(" or ", $driver_string);
                 
                 $man = str_replace('"','',$tmp[0]);
                 $mod = str_replace('"','',$tmp[3]);
@@ -45,7 +46,16 @@ function readModels() {
                     $star.="*";
                 }
                 $desc = "$man - $mod ($star)";
-                $models[$desc] = $driver;
+                
+                if (!isset($models[$desc])) {
+                    $models[$desc] = $driver_list;
+                } else {
+                    foreach ($driver_list as $index => $driver) {
+                        array_push($models[$desc], $driver);
+                    }
+                }
+
+                // echo("<script>console.log('PHP: ".$models[$desc]."');</script>");
             }
         }
         if (!feof($handle)) {
@@ -71,12 +81,19 @@ $models = readModels();
 // "Password": "790793219561846",
 // "Ups": "UPS"
 
+$driver_list = array();
+foreach (array_values($models) as $index => $drivers) {
+    foreach ($drivers as $index => $driver) {
+        array_push($driver_list, $driver);
+    }
+}
+
 $nut_server_validator->declareParameter('status', Validate::SERVICESTATUS);
 $nut_server_validator->declareParameter('access', Validate::NOTEMPTY);
 $nut_server_validator->declareParameter('User', Validate::USERNAME);
 $nut_server_validator->declareParameter('TCPPort', Validate::PORTNUMBER);
 $nut_server_validator->declareParameter('Device', $nut_server_validator->createValidator()->memberOf($devices));
-$nut_server_validator->declareParameter('Model', $nut_server_validator->createValidator()->memberOf($models));
+$nut_server_validator->declareParameter('Model', $nut_server_validator->createValidator()->memberOf($driver_list));
 $nut_server_validator->declareParameter('Password', Validate::NOTEMPTY);
 $nut_server_validator->declareParameter('Ups', Validate::NOTEMPTY);
 

@@ -16,7 +16,7 @@
 
       <div class="list-group-item info-item">
         <span class="fa fa-globe m-right-sm"></span>
-        <a target="_blank" href="https://github.com/NethServer/nethserver-cockpit-empty-VueJS">{{$t('about.website')}}</a>
+        <a target="_blank" href="https://github.com/NethServer/nethserver-nut">{{$t('about.website')}}</a>
       </div>
       <div class="list-group-item info-item">
         <span class="fa fa-bug m-right-sm"></span>
@@ -52,7 +52,7 @@ export default {
         ["system-apps/read"],
         {
           action: "info",
-          name: "nethserver-cockpit-empty-VueJS"
+          name: "nethserver-nut"
         },
         null,
         function(success) {

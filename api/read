@@ -3,6 +3,7 @@
 import simplejson
 import sys
 import subprocess
+import fileinput
 
 class UpsModel:
     def __init__(self, description, model_name, manufacturer, support_level, drivers):
@@ -70,12 +71,22 @@ def read_config(config_name):
     config_json = simplejson.loads(output)
     return config_json
 
-# try:
-models = read_models()
-nut_server_config = read_config('nut-server')
-nut_monitor_config = read_config('nut-monitor')
-output = simplejson.dumps({'configuration': { 'models': models, 'nut_server': nut_server_config, 'nut_monitor': nut_monitor_config } })
-print (output)
-# except Exception, e:
-#     print simplejson.dumps({ 'error':"%s" % e })
-#     sys.exit(1)
+try:
+    line = fileinput.input()[0].rstrip()
+    input_json = simplejson.loads(line)
+    app_info = input_json["app_info"]
+
+    if app_info == 'configuration':
+        nut_server_config = read_config('nut-server')
+        nut_monitor_config = read_config('nut-monitor')
+        output = simplejson.dumps({'configuration': { 'nut_server': nut_server_config, 'nut_monitor': nut_monitor_config } })
+        print (output)
+    elif app_info == 'models':
+        models = read_models()
+        output = simplejson.dumps({ 'models': models })
+        print (output)
+    else:
+        raise ValueError('app_info must be \'configuration\' or \'models\'')
+except Exception, e:
+    print simplejson.dumps({ 'error': "%s" % e })
+    sys.exit(1)

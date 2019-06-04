@@ -15,9 +15,9 @@
         "url": "https://github.com/NethServer/dev/issues"
     },
     "author": {
-        "name": "Author's name of NethServer NUT configuration",
+        "name": "Andrea Leardini, Edoardo Spadoni",
         "url": "https://github.com/NethServer/nethserver-nut",
-        "email": "Author's email of NethServer NUT configuration"
+        "email": "andrea.leardini@nethesis.it, edoardo.spadoni@nethesis.it"
     },
     "icon": "icon.png"
 }

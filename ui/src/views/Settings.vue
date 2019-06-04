@@ -371,31 +371,45 @@ export default {
       var ctx = this;
       nethserver.exec(
         ["nethserver-nut/read"],
-        {},
+        { "app_info": "configuration" },
         null,
         function (success) {
           try {
             success = JSON.parse(success);
-            ctx.models = success.configuration.models;
             ctx.nutServerConfig = success.configuration.nut_server.props;
             ctx.nutMonitorConfig = success.configuration.nut_monitor.props;
-
-            // update view settings
-            ctx.viewConfig.enableNutUps = ctx.nutMonitorConfig.status === 'enabled' ? true : false;
-            ctx.viewConfig.master = ctx.nutMonitorConfig.Master;
-            
-            if (ctx.viewConfig.master) {
-              ctx.viewConfig.mode = 'client';
-            } else {
-              ctx.viewConfig.mode = 'server';
-            }
-            ctx.viewConfig.driver = ctx.nutServerConfig.Model;
-            ctx.viewConfig.device = ctx.nutServerConfig.Device;
-            ctx.viewConfig.upsName = ctx.nutServerConfig.Ups;
-            ctx.viewConfig.upsUser = ctx.nutServerConfig.User;
-            ctx.viewConfig.password = ctx.nutServerConfig.Password;
-            ctx.configLoaded = true;
-            ctx.modelTyped = false;
+            nethserver.exec(
+              ["nethserver-nut/read"],
+              { "app_info": "models" },
+              null,
+              function (success) {
+                try {
+                  success = JSON.parse(success);
+                  ctx.models = success.models;
+                  // update view settings
+                  ctx.viewConfig.enableNutUps = ctx.nutMonitorConfig.status === 'enabled' ? true : false;
+                  ctx.viewConfig.master = ctx.nutMonitorConfig.Master;
+                  
+                  if (ctx.viewConfig.master) {
+                    ctx.viewConfig.mode = 'client';
+                  } else {
+                    ctx.viewConfig.mode = 'server';
+                  }
+                  ctx.viewConfig.driver = ctx.nutServerConfig.Model;
+                  ctx.viewConfig.device = ctx.nutServerConfig.Device;
+                  ctx.viewConfig.upsName = ctx.nutServerConfig.Ups;
+                  ctx.viewConfig.upsUser = ctx.nutServerConfig.User;
+                  ctx.viewConfig.password = ctx.nutServerConfig.Password;
+                  ctx.configLoaded = true;
+                  ctx.modelTyped = false;
+                } catch (e) {
+                  console.error(e) /* eslint-disable-line no-console */
+                }
+              },
+              function (error) {
+                console.error(error) /* eslint-disable-line no-console */
+              }
+            );
           } catch (e) {
             console.error(e) /* eslint-disable-line no-console */
           }

@@ -55,9 +55,9 @@ def read_models():
         ups_model.add_drivers(drivers)
 
     for description, ups_model in models_drivers.iteritems():
-        model_json_string = '{ "model_name": "%s", "manufacturer": "%s", "drivers": "%s", "description": "%s", "support_level": "%d" }' % \
+        model_json_string = '{ "model_name": "%s", "manufacturer": "%s", "drivers": %s, "description": "%s", "support_level": "%d" }' % \
             (ups_model.model_name, ups_model.manufacturer, list(ups_model.drivers), ups_model.description, ups_model.support_level)
-
+        model_json_string = model_json_string.replace("'", '"')
         model_json = simplejson.loads(model_json_string)
         models.append(model_json)
 
@@ -70,12 +70,12 @@ def read_config(config_name):
     config_json = simplejson.loads(output)
     return config_json
 
-try:
-    models = read_models()
-    nut_server_config = read_config('nut-server')
-    nut_monitor_config = read_config('nut-monitor')
-    output = simplejson.dumps({'configuration': { 'models': models, 'nut_server': nut_server_config, 'nut_monitor': nut_monitor_config } })
-    print (output)
-except Exception, e:
-    print simplejson.dumps({ 'error':"%s" % e })
-    sys.exit(1)
+# try:
+models = read_models()
+nut_server_config = read_config('nut-server')
+nut_monitor_config = read_config('nut-monitor')
+output = simplejson.dumps({'configuration': { 'models': models, 'nut_server': nut_server_config, 'nut_monitor': nut_monitor_config } })
+print (output)
+# except Exception, e:
+#     print simplejson.dumps({ 'error':"%s" % e })
+#     sys.exit(1)

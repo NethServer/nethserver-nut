@@ -1,6 +1,6 @@
 {
     "id": "nethserver-nut",
-    "name": "NethServer NUT configuration",
+    "name": "UPS",
     "summary": "NethServer UPS managemnt using NUT",
     "description": "NethServer UPS managemnt using NUT",
     "url": "",

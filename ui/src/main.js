@@ -39,6 +39,9 @@ import About from './views/About.vue'
 import UtilService from "./services/util"
 Vue.mixin(UtilService)
 
+window.c3 = require('c3');
+window.d3 = require('d3');
+
 Vue.config.productionTip = false
 Vue.use(VueToggleButton);
 Vue.component('doc-info', DocInfo);
@@ -59,6 +62,7 @@ const router = new Router({
       { path: '/settings', component: Settings },
       { path: '/logs', component: Logs },
       { path: '/about', name: 'about', component: About },
+      { path: "*", redirect: "/" }
     ]
 })
 router.replace("/dashboard")

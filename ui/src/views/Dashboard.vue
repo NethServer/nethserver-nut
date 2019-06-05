@@ -1,5 +1,149 @@
 <template>
-  <div class="hello">  
+  <div>
+    <div class="col-lg-12">
+      <h1>{{$t('dashboard.title')}}</h1>
+
+      <div v-show="!configLoaded" class="spinner spinner-lg"></div>
+      <div v-show="configLoaded">
+        <div class="row fluid divider margin-top-20">
+          <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="form-horizontal">
+              <div class="form-group compact">
+                <label class="col-sm-3 control-label property-large">{{ $t('dashboard.model') }}</label>
+                <div class="col-sm-9 adjust-li">
+                  <p class="line-high property-large">
+                    {{ status.device_model }}
+                    <span class="gray">({{ status.driver_name }})</span>
+                  </p>
+                </div>
+                <label class="col-sm-3 control-label property-large">{{ $t('dashboard.status') }}</label>
+                <div class="col-sm-9 adjust-li">
+                  <p class="line-high property-large">
+                    <span v-if="status.ups_status === 'OL'">
+                      Online
+                      <span class="fa pficon-ok"></span>
+                    </span>
+                    <span v-else>
+                      {{ status.ups_status }}
+                      <span class="fa pficon-error-circle-o"></span>
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h3>{{$t('dashboard.statistics')}}</h3>
+
+        <div class="row row-stat fluid">
+          <div class="row-inline-block">
+            <div class="stats-container col-xs-12 col-sm-4 col-md-4 width-30">
+              <span
+                class="card-pf-utilization-card-details-count stats-count"
+              >{{ parseFloat(status.input_voltage) }} V</span>
+              <span class="card-pf-utilization-card-details-description stats-description">
+                <span
+                  class="card-pf-utilization-card-details-line-2 stats-text"
+                >{{$t('dashboard.input_voltage')}}</span>
+              </span>
+            </div>
+            <div class="stats-container col-xs-12 col-sm-4 col-md-4">
+              <span
+                class="card-pf-utilization-card-details-count stats-count"
+              >{{ parseFloat(status.output_voltage) }} V</span>
+              <span class="card-pf-utilization-card-details-description stats-description">
+                <span
+                  class="card-pf-utilization-card-details-line-2 stats-text"
+                >{{$t('dashboard.output_voltage')}}</span>
+              </span>
+            </div>
+            <div class="stats-container col-xs-12 col-sm-4 col-md-4">
+              <span
+                class="card-pf-utilization-card-details-count stats-count"
+              >{{ parseFloat(status.ups_temperature) }} &deg;C</span>
+              <span class="card-pf-utilization-card-details-description stats-description">
+                <span
+                  class="card-pf-utilization-card-details-line-2 stats-text"
+                >{{$t('dashboard.temperature')}}</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="row-eq-height divider">
+          <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 resources-panel">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">
+                  <span class="icon-header-panel">
+                    <span class="fa pficon-rebalance right"></span>
+                  </span>
+                  {{$t('dashboard.load')}}
+                </h3>
+              </div>
+              <div class="panel-body">
+                <div id="load-chart" class="text-center"></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 resources-panel">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">
+                  <span class="icon-header-panel">
+                    <span class="fa fa-battery-full right"></span>
+                  </span>
+                  {{$t('dashboard.battery_charge')}}
+                </h3>
+              </div>
+              <div class="panel-body">
+                <div id="battery-charge-chart" class="text-center"></div>
+              </div>
+              <div class="panel-footer">
+                <div>
+                  <span class="fa fa-clock-o filter-icon"></span>
+                  <span>
+                    {{$t('dashboard.battery_runtime')}}:
+                    <span
+                      class="bold"
+                    >{{ Math.round(status.battery_runtime / 60) }} {{$t('dashboard.minutes')}}</span>
+                  </span>
+                </div>
+                <div>
+                  <span class="fa fa-bolt filter-icon margin-left-4"></span>
+                  <span>
+                    {{$t('dashboard.battery_voltage')}}:
+                    <span class="bold">{{ status.battery_voltage }} V</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h3>{{$t('dashboard.raw_output')}}</h3>
+        <div class="form-group">
+          <legend class="fields-section-header-pf col-sm-1" aria-expanded="true">
+            <span
+              :class="['fa fa-angle-right field-section-toggle-pf', showRawOutput ? 'fa-angle-down' : '']"
+            ></span>
+            <a
+              class="field-section-toggle-pf"
+              @click="toggleRawOutput()"
+            >{{$t('dashboard.details')}}</a>
+          </legend>
+        </div>
+        <div class="form-group margin-top-40" v-if="showRawOutput">
+          <ul>
+            <li v-for="(i, ik) in status" :key="ik">
+              <code>{{ ik }}</code>
+              <span class="property-value">{{ i }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -8,16 +152,176 @@ var nethserver = window.nethserver;
 var $ = window.$;
 
 export default {
-  name: 'Users',
+  name: "Users",
   props: {
     msg: String
   },
+  mounted() {
+    this.getUpsStatus();
+  },
   data() {
     return {
+      configLoaded: false,
+      status: {},
+      showRawOutput: false
     };
+  },
+  methods: {
+    getUpsStatus: function() {
+      var ctx = this;
+      nethserver.exec(
+        ["nethserver-nut/read"],
+        { app_info: "status" },
+        null,
+        function(success) {
+          try {
+            success = JSON.parse(success);
+            ctx.status = success.status;
+            ctx.configLoaded = true;
+            ctx.initMemoryCharts();
+          } catch (e) {
+            console.error(e); /* eslint-disable-line no-console */
+          }
+        },
+        function(error) {
+          console.error(error); /* eslint-disable-line no-console */
+        }
+      );
+    },
+    toggleRawOutput() {
+      this.showRawOutput = !this.showRawOutput;
+    },
+    initMemoryCharts() {
+      var c3ChartDefaults = patternfly.c3ChartDefaults();
+      var loadConfig = c3ChartDefaults.getDefaultDonutConfig("A");
+      var batteryChargeConfig = c3ChartDefaults.getDefaultDonutConfig("A");
+      loadConfig.bindto = "#load-chart";
+      batteryChargeConfig.bindto = "#battery-charge-chart";
+
+      loadConfig.data = {
+        type: "donut",
+        columns: [
+          ["Used", parseFloat(this.status.ups_load)],
+          ["Available", 100 - parseFloat(this.status.ups_load)]
+        ],
+        groups: [["used", "available"]],
+        order: null
+      };
+      batteryChargeConfig.data = {
+        type: "donut",
+        columns: [
+          ["Charged", parseFloat(this.status.battery_charge)],
+          ["Not charged", 100 - parseFloat(this.status.battery_charge)]
+        ],
+        groups: [["used", "available"]],
+        order: null
+      };
+      loadConfig.size = {
+        width: 180,
+        height: 180
+      };
+      batteryChargeConfig.size = {
+        width: 180,
+        height: 180
+      };
+
+      loadConfig.tooltip = {
+        contents: patternfly.pfGetUtilizationDonutTooltipContentsFn("")
+      };
+      batteryChargeConfig.tooltip = {
+        contents: patternfly.pfGetUtilizationDonutTooltipContentsFn("")
+      };
+
+      c3.generate(loadConfig);
+      c3.generate(batteryChargeConfig);
+      patternfly.pfSetDonutChartTitle(
+        "#load-chart",
+        parseFloat(this.status.ups_load),
+        " %"
+      );
+      patternfly.pfSetDonutChartTitle(
+        "#battery-charge-chart",
+        parseFloat(this.status.battery_charge),
+        " %"
+      );
+    }
   }
-}
+};
 </script>
 
 <style>
+.right {
+  float: right;
+}
+.line-high {
+  line-height: 25px;
+}
+.property-large {
+  font-size: 14px;
+  padding-top: 3px;
+}
+.gray {
+  color: #8b8d8f;
+}
+.width-30 {
+  width: 30%;
+}
+.margin-top-20 {
+  margin-top: 20px;
+}
+.padding-bottom-20 {
+  padding-bottom: 20px;
+}
+.margin-top-40 {
+  margin-top: 40px;
+}
+.property-value {
+  font-weight: bold;
+  margin-left: 10px;
+}
+.bold {
+  font-weight: bold;
+}
+.filter-icon {
+  margin-right: 10px;
+  font-size: 20px;
+}
+.row-eq-height {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  flex-flow: row wrap;
+}
+.row-eq-height > div {
+  margin: 20px 0;
+}
+.row-eq-height .panel {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.panel-body {
+  flex-grow: 1;
+}
+.panel-body [class^="pficon-"] {
+  vertical-align: middle;
+  margin-right: 0.5ex;
+}
+.icon-header-panel .fa {
+  float: right;
+}
+.stats-count {
+  font-size: 26px;
+  font-weight: 300;
+  margin-right: 10px;
+  line-height: 1;
+}
+.stats-container {
+  padding: 20px !important;
+  text-align: center;
+}
+.margin-left-4 {
+  margin-left: 4px;
+}
 </style>

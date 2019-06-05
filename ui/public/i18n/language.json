@@ -64,6 +64,19 @@
     "filter_label": "Regexp filter"
   },
   "dashboard":{
-    "title": "Dashboard"
+    "title": "Dashboard",
+    "load": "Load",
+    "battery_charge": "Battery charge",
+    "model": "Model",
+    "status": "Status",
+    "statistics": "Statistics",
+    "input_voltage": "Input voltage",
+    "output_voltage": "Output voltage",
+    "temperature": "Temperature",
+    "raw_output": "Raw output",
+    "details": "Details",
+    "battery_runtime": "Battery runtime",
+    "battery_voltage": "Battery voltage",
+    "minutes": "minutes"
   }
 }

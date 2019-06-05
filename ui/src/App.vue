@@ -58,6 +58,30 @@
 </div>
 </template>
 
+<script>
+export default {
+  name: "App",
+  watch: {
+    $route: function(val) {
+      localStorage.setItem("path", val.path);
+    }
+  },
+  mounted() {
+    var path = localStorage.getItem("path") || "/";
+    this.$router.push(path);
+  },
+  methods: {
+    getCurrentPath(route, offset) {
+      if (offset) {
+        return this.$route.path.split("/")[offset] === route;
+      } else {
+        return this.$route.path.split("/")[1] === route;
+      }
+    }
+  }
+};
+</script>
+
 <style>
 .divider {
   border-bottom: 1px solid #d1d1d1;

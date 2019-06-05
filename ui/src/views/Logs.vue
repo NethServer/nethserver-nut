@@ -41,7 +41,7 @@
         </div>
       </div>
     </form>
-    <form role="form" class="search-pf has-button form-horizontal">
+    <form role="form" class="search-pf has-button form-horizontal" v-on:submit.prevent="">
       <div class="form-group has-clear">
         <div class="search-pf-input-group">
           <label for="search1" class="sr-only">Search</label>

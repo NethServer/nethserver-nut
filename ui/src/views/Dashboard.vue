@@ -4,7 +4,24 @@
       <h1>{{$t('dashboard.title')}}</h1>
 
       <div v-show="!configLoaded" class="spinner spinner-lg"></div>
-      <div v-show="configLoaded">
+
+      <!-- Empty state -->
+      <div v-show="configLoaded && showEmptyState" class="blank-slate-pf " id="">
+        <div class="blank-slate-pf-icon">
+          <span class="fa fa-bolt"></span>
+        </div>
+        <h1>
+          {{$t('dashboard.ups_not_configured')}}
+        </h1>
+        <p>
+          {{$t('dashboard.empty_state')}}.
+        </p>
+        <div class="blank-slate-pf-main-action">
+          <a href="#/settings" class="btn btn-primary btn-lg">{{$t('settings.title')}}</a>
+        </div>
+      </div>
+
+      <div v-show="configLoaded && !showEmptyState">
         <div class="row fluid divider margin-top-20">
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <div class="form-horizontal">
@@ -34,7 +51,7 @@
           </div>
         </div>
 
-        <h3>{{$t('dashboard.statistics')}}</h3>
+        <h3>{{$t('dashboard.status')}}</h3>
 
         <div class="row row-stat fluid">
           <div class="row-inline-block">
@@ -85,6 +102,20 @@
               <div class="panel-body">
                 <div id="load-chart" class="text-center"></div>
               </div>
+              <div class="panel-footer" v-show="nutMonitorConfig.Master">
+                <div>
+                  <span class="pficon pficon-users filter-icon"></span>
+                  <span>
+                    {{$t('dashboard.clients_connected')}}:
+                    <span class="bold">{{ clients.length }}</span>
+
+                    <a href="#" class="margin-left-4" data-toggle="popover" data-html="true"
+                      :title="this.$i18n.t('dashboard.ups_clients')"
+                      :data-content="this.clients_popover_text">{{$t('dashboard.details')}}
+                    </a>
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
           <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 resources-panel">
@@ -122,7 +153,7 @@
           </div>
         </div>
 
-        <h3>{{$t('dashboard.raw_output')}}</h3>
+        <h3>{{$t('dashboard.full_status')}}</h3>
         <div class="form-group">
           <legend class="fields-section-header-pf col-sm-1" aria-expanded="true">
             <span
@@ -134,7 +165,7 @@
             >{{$t('dashboard.details')}}</a>
           </legend>
         </div>
-        <div class="form-group margin-top-40" v-if="showRawOutput">
+        <div class="form-group margin-top-40" v-show="showRawOutput">
           <ul>
             <li v-for="(i, ik) in status" :key="ik">
               <code>{{ ik }}</code>
@@ -157,26 +188,42 @@ export default {
     msg: String
   },
   mounted() {
-    this.getUpsStatus();
+    this.getUpsData();
+
+    // Initialize Popovers
+    $('[data-toggle=popover]').popovers()
+      .on('hidden.bs.popover', function (e) {
+        $(e.target).data('bs.popover').inState.click = false;
+    });
   },
   data() {
     return {
       configLoaded: false,
       status: {},
-      showRawOutput: false
+      showRawOutput: false,
+      clients: [],
+      clients_popover_text: '',
+      nutServerConfig: {},
+      nutMonitorConfig: {},
+      showEmptyState: false
     };
   },
   methods: {
-    getUpsStatus: function() {
+    getUpsData: function() {
       var ctx = this;
       nethserver.exec(
-        ["nethserver-nut/read"],
-        { app_info: "status" },
+        ["nethserver-nut/dashboard/read"],
+        {},
         null,
         function(success) {
           try {
             success = JSON.parse(success);
             ctx.status = success.status;
+            ctx.clients = success.clients;
+            ctx.nutServerConfig = success.configuration.nut_server.props;
+            ctx.nutMonitorConfig = success.configuration.nut_monitor.props;
+            ctx.getClientsPopoverText();
+            ctx.showEmptyState = false;
             ctx.configLoaded = true;
             ctx.initMemoryCharts();
           } catch (e) {
@@ -185,8 +232,17 @@ export default {
         },
         function(error) {
           console.error(error); /* eslint-disable-line no-console */
+          ctx.showEmptyState = true;
+          ctx.configLoaded = true;
         }
       );
+    },
+    getClientsPopoverText() {
+      this.clients_popover_text = '<ul>'
+      for (var client of this.clients) {
+        this.clients_popover_text += '<li>' + client + '</li>';
+      }
+      this.clients_popover_text += '</ul>'
     },
     toggleRawOutput() {
       this.showRawOutput = !this.showRawOutput;

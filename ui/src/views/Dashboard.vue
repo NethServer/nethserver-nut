@@ -102,7 +102,7 @@
               <div class="panel-body">
                 <div id="load-chart" class="text-center"></div>
               </div>
-              <div class="panel-footer" v-show="nutMonitorConfig.Master">
+              <div class="panel-footer" v-show="!nutMonitorConfig.Master">
                 <div>
                   <span class="pficon pficon-users filter-icon"></span>
                   <span>

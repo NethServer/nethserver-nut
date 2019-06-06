@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Copyright (C) 2018 Nethesis S.r.l.
+# Copyright (C) 2019 Nethesis S.r.l.
 # http://www.nethesis.it - nethserver@nethesis.it
 #
 # This script is part of NethServer.
@@ -25,15 +25,6 @@
 # Read JSON from stdin and set the record
 data=$(cat /dev/stdin)
 
-# "status": "disabled",
-# "access": "green",
-# "User": "upsmon",
-# "TCPPort": "3493",
-# "Device": "auto",
-# "Model": "usbhid-ups",
-# "Password": "790793219561846",
-# "Ups": "UPS"
-
 nutserver_status=$(echo $data | jq -r '.configuration.nut_server.props.status')
 access=$(echo $data | jq -r '.configuration.nut_server.props.access')
 user=$(echo $data | jq -r '.configuration.nut_server.props.User')
@@ -42,10 +33,6 @@ device=$(echo $data | jq -r '.configuration.nut_server.props.Device')
 model=$(echo $data | jq -r '.configuration.nut_server.props.Model')
 password=$(echo $data | jq -r '.configuration.nut_server.props.Password')
 ups=$(echo $data | jq -r '.configuration.nut_server.props.Ups')
-
-# "status": "disabled",
-# "Master": "",
-# "Notify": "disabled"
 
 nutmonitor_status=$(echo $data | jq -r '.configuration.nut_monitor.props.status')
 master=$(echo $data | jq -r '.configuration.nut_monitor.props.Master')

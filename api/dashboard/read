@@ -1,5 +1,25 @@
 #!/usr/bin/python
 
+#
+# Copyright (C) 2019 Nethesis S.r.l.
+# http://www.nethesis.it - nethserver@nethesis.it
+#
+# This script is part of NethServer.
+#
+# NethServer is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License,
+# or any later version.
+#
+# NethServer is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NethServer.  If not, see COPYING.
+#
+
 import simplejson
 import sys
 import subprocess
@@ -25,7 +45,7 @@ def read_clients():
     if not ups_name:
         ups_name = 'UPS'
 
-    bash_command = "timeout 0.4 /usr/bin/upsc -c %s" % ups_name
+    bash_command = "timeout 2 /usr/bin/upsc -c %s" % ups_name
     process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output, error = process.communicate()
     if error:
@@ -37,7 +57,7 @@ def read_clients():
     # every line contains an IP address
     for ip_address in lines:
         if ip_address:
-            bash_command = "timeout 0.4 /usr/bin/host %s" % ip_address
+            bash_command = "timeout 2 /usr/bin/host %s" % ip_address
             process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output, error = process.communicate()
             if error:
@@ -70,7 +90,7 @@ def read_status():
         nut_monitor_config = read_config('nut-monitor')
         ups_server = nut_monitor_config['props']['Master']
 
-    bash_command = "timeout 0.4 /usr/bin/upsc %s@%s" % (ups_name, ups_server)
+    bash_command = "timeout 2 /usr/bin/upsc %s@%s" % (ups_name, ups_server)
     process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output, error = process.communicate()
     if error:

@@ -30,12 +30,7 @@
               for="textInput-modal-markup"
             >{{$t('settings.mode')}}</label>
             <div class="col-sm-5">
-              <select
-                required
-                type="text"
-                class="combobox form-control"
-                v-model="viewConfig.mode"
-              >
+              <select required type="text" class="combobox form-control" v-model="viewConfig.mode">
                 <option value="server">{{$t('settings.server')}}</option>
                 <option value="client">{{$t('settings.client')}}</option>
               </select>
@@ -43,9 +38,9 @@
           </div>
           <div v-if="viewConfig.mode === 'server'">
             <!-- Model -->
-            <div class="form-group">
-              <label 
-                class="col-sm-2 control-label" 
+            <div class="form-group" v-if="showModel">
+              <label
+                class="col-sm-2 control-label"
                 for="textInput-modal-markup"
               >{{$t('settings.model')}}</label>
               <div class="col-sm-5">
@@ -61,23 +56,15 @@
                       <b class="mg-left-5">{{props.item.manufacturer}}</b>
                       -
                       {{props.item.model_name}}
-                      <i class="mg-left-5">(<span v-for="i in parseInt(props.item.support_level)" v-bind:key="i">*</span>)</i>
+                      <i
+                        class="mg-left-5"
+                      >
+                        (
+                        <span v-for="i in parseInt(props.item.support_level)" v-bind:key="i">*</span>)
+                      </i>
                     </span>
                   </div>
                 </suggestions>
-                <!-- <input                                      props.item.support_level
-                  type="text" 
-                  v-model="viewConfig.model" 
-                  class="combobox form-control"
-                  :placeholder="$t('search')+'...'"
-                  @change="modelSelected()"
-                  list="models"
-                >
-                <datalist id="models">
-                  <option v-for="(model, index) in matchingModels" v-bind:key="index" :value="model.description">
-                    {{ model.description }}
-                  </option>
-                </datalist> -->
               </div>
             </div>
             <!-- Driver -->
@@ -94,17 +81,27 @@
                   v-model="viewConfig.driver"
                   v-if="modelTyped"
                 >
-                  <option v-for="(driver, index) in driversForModel" v-bind:key="index" :value="driver">
-                    {{ driver }}
-                  </option>
+                  <option
+                    v-for="(driver, index) in driversForModel"
+                    v-bind:key="index"
+                    :value="driver"
+                  >{{ driver }}</option>
                 </select>
-                <input 
-                  type="input" 
+                <input
+                  type="input"
                   class="form-control"
                   v-model="viewConfig.driver"
                   v-if="!modelTyped"
                   :disabled="!modelTyped"
                 >
+              </div>
+              <!-- Edit driver -->
+              <div class="col-sm-2 adjust-index" v-if="!showModel">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  @click="editDriver()"
+                >{{$t('edit')}}</button>
               </div>
             </div>
             <!-- Device -->
@@ -136,76 +133,61 @@
 
             <!-- UPS name -->
             <div class="form-group">
-              <label 
-                class="col-sm-2 control-label" 
+              <label
+                class="col-sm-2 control-label"
                 for="textInput-modal-markup"
               >{{$t('settings.ups_name')}}</label>
               <div class="col-sm-5">
-                <input 
-                  type="input" 
-                  class="form-control"
-                  v-model="viewConfig.upsName"
-                  disabled
-                >
+                <input type="input" class="form-control" v-model="viewConfig.upsName" disabled>
               </div>
               <!-- Copy UPS name -->
               <div class="col-sm-2 adjust-index">
                 <button
-                  type="button" class="btn btn-primary"
+                  type="button"
+                  class="btn btn-primary"
                   v-clipboard:copy="viewConfig.upsName"
                   v-clipboard:success="onCopyUpsNameSuccess"
-                >{{$t('copy')}}
-                </button>
+                >{{$t('copy')}}</button>
                 <span v-if="upsNameCopied" class="fa fa-check green copy-success"></span>
               </div>
             </div>
             <!-- UPS user -->
             <div class="form-group">
-              <label 
-                class="col-sm-2 control-label" 
+              <label
+                class="col-sm-2 control-label"
                 for="textInput-modal-markup"
               >{{$t('settings.ups_user')}}</label>
               <div class="col-sm-5">
-                <input 
-                  type="input" 
-                  class="form-control"
-                  v-model="viewConfig.upsUser"
-                  disabled
-                >
+                <input type="input" class="form-control" v-model="viewConfig.upsUser" disabled>
               </div>
               <!-- Copy UPS user -->
               <div class="col-sm-2 adjust-index">
                 <button
-                  type="button" class="btn btn-primary"
+                  type="button"
+                  class="btn btn-primary"
                   v-clipboard:copy="viewConfig.upsUser"
                   v-clipboard:success="onCopyUpsUserSuccess"
-                >{{$t('copy')}}
-                </button>
+                >{{$t('copy')}}</button>
                 <span v-if="upsUserCopied" class="fa fa-check green copy-success"></span>
               </div>
             </div>
             <!-- Password for slaves -->
             <div class="form-group">
-              <label 
-                class="col-sm-2 control-label" 
+              <label
+                class="col-sm-2 control-label"
                 for="textInput-modal-markup"
-              >{{$t('settings.password_for_slaves')}}</label>
+              >{{$t('settings.password_for_clients')}}</label>
               <div class="col-sm-5">
-                <input 
-                  type="input" 
-                  class="form-control"
-                  v-model="viewConfig.password"
-                  disabled
-                >
+                <input type="input" class="form-control" v-model="viewConfig.password" disabled>
               </div>
               <!-- Copy password for slaves -->
               <div class="col-sm-2 adjust-index">
                 <button
-                  type="button" class="btn btn-primary"
+                  type="button"
+                  class="btn btn-primary"
                   v-clipboard:copy="viewConfig.password"
                   v-clipboard:success="onCopyPasswordForSlavesSuccess"
-                >{{$t('copy')}}  
-                </button>
+                >{{$t('copy')}}</button>
                 <span v-if="passwordForSlavesCopied" class="fa fa-check green copy-success"></span>
               </div>
             </div>
@@ -213,52 +195,48 @@
           <div v-if="viewConfig.mode === 'client'">
             <!-- Master server address -->
             <div class="form-group" v-bind:class="{ 'has-error': showErrorMaster }">
-              <label 
-                class="col-sm-2 control-label" 
+              <label
+                class="col-sm-2 control-label"
                 for="textInput-modal-markup"
               >{{$t('settings.master_server_address')}}</label>
               <div class="col-sm-5">
-                <input 
-                  type="input" 
-                  class="form-control"
-                  v-model="viewConfig.master"
-                >
+                <input type="input" class="form-control" v-model="viewConfig.master">
                 <span class="help-block" v-if="showErrorMaster">{{$t('settings.master_validation')}}</span>
               </div>
             </div>
             <!-- Password -->
             <div class="form-group" v-bind:class="{ 'has-error': showErrorPassword }">
-              <label 
-                class="col-sm-2 control-label" 
+              <label
+                class="col-sm-2 control-label"
                 for="textInput-modal-markup"
               >{{$t('settings.password')}}</label>
               <div class="col-sm-5">
-                <input 
+                <input
                   :type="passwordVisible ? 'text' : 'password'"
                   class="form-control"
                   v-model="viewConfig.password"
                 >
-                <span class="help-block" v-if="showErrorPassword">{{$t('settings.password_validation')}}</span>
+                <span
+                  class="help-block"
+                  v-if="showErrorPassword"
+                >{{$t('settings.password_validation')}}</span>
               </div>
               <!-- Toggle password visibility -->
               <div class="col-sm-2 adjust-index">
-                  <button 
-                    tabindex="-1" 
-                    type="button" 
-                    class="btn btn-primary"
-                    @click="togglePasswordVisibility()"
-                  >
-                    <span :class="[!passwordVisible ? 'fa fa-eye' : 'fa fa-eye-slash']"></span>
-                  </button>
+                <button
+                  tabindex="-1"
+                  type="button"
+                  class="btn btn-primary"
+                  @click="togglePasswordVisibility()"
+                >
+                  <span :class="[!passwordVisible ? 'fa fa-eye' : 'fa fa-eye-slash']"></span>
+                </button>
               </div>
             </div>
 
             <!-- Advanced options -->
             <div class="form-group">
-              <legend
-                class="fields-section-header-pf col-sm-1"
-                aria-expanded="true"
-              >
+              <legend class="fields-section-header-pf col-sm-1" aria-expanded="true">
                 <span
                   :class="['fa fa-angle-right field-section-toggle-pf', showAdvancedOptions ? 'fa-angle-down' : '']"
                 ></span>
@@ -268,38 +246,33 @@
                 >{{$t('advanced_options')}}</a>
               </legend>
             </div>
-            <div
-              class="form-group"
-              v-if="showAdvancedOptions"
-            >
+            <div class="form-group" v-if="showAdvancedOptions">
               <!-- UPS name -->
               <div class="form-group" v-bind:class="{ 'has-error': showErrorUpsName }">
-                <label 
-                  class="col-sm-2 control-label" 
+                <label
+                  class="col-sm-2 control-label"
                   for="textInput-modal-markup"
                 >{{$t('settings.ups_name')}}</label>
                 <div class="col-sm-5">
-                  <input 
-                    type="input" 
-                    class="form-control"
-                    v-model="viewConfig.upsName"
-                  >
-                  <span class="help-block" v-if="showErrorUpsName">{{$t('settings.ups_name_validation')}}</span>
+                  <input type="input" class="form-control" v-model="viewConfig.upsName">
+                  <span
+                    class="help-block"
+                    v-if="showErrorUpsName"
+                  >{{$t('settings.ups_name_validation')}}</span>
                 </div>
               </div>
               <!-- UPS user -->
               <div class="form-group" v-bind:class="{ 'has-error': showErrorUpsUser }">
-                <label 
-                  class="col-sm-2 control-label" 
+                <label
+                  class="col-sm-2 control-label"
                   for="textInput-modal-markup"
                 >{{$t('settings.ups_user')}}</label>
                 <div class="col-sm-5">
-                  <input 
-                    type="input" 
-                    class="form-control"
-                    v-model="viewConfig.upsUser"
-                  >
-                  <span class="help-block" v-if="showErrorUpsUser">{{$t('settings.ups_user_validation')}}</span>
+                  <input type="input" class="form-control" v-model="viewConfig.upsUser">
+                  <span
+                    class="help-block"
+                    v-if="showErrorUpsUser"
+                  >{{$t('settings.ups_user_validation')}}</span>
                 </div>
               </div>
             </div>
@@ -308,10 +281,7 @@
 
         <!-- Save -->
         <div class="form-group">
-          <label 
-            class="col-sm-2 control-label" 
-            for="textInput-modal-markup"
-          ></label>
+          <label class="col-sm-2 control-label" for="textInput-modal-markup"></label>
           <div class="col-sm-5">
             <button class="btn btn-primary" type="button" v-on:click="btSaveClick">{{$t('save')}}</button>
           </div>
@@ -341,7 +311,8 @@ export default {
       matchingModels: [],
       modelTyped: false,
       autoOptions: {
-        inputClass: "form-control"
+        inputClass: "form-control",
+        placeholder: this.$i18n.t('settings.search_for_model')
       },
       showErrorMaster: false,
       showErrorPassword: false,
@@ -350,6 +321,7 @@ export default {
       upsNameCopied: false,
       upsUserCopied: false,
       passwordForSlavesCopied: false,
+      showModel: false,
       viewConfig: {
         enableNutUps: false,
         mode: '',
@@ -370,7 +342,7 @@ export default {
     getConfig: function() {
       var ctx = this;
       nethserver.exec(
-        ["nethserver-nut/read"],
+        ["nethserver-nut/settings/read"],
         { "app_info": "configuration" },
         null,
         function (success) {
@@ -379,7 +351,7 @@ export default {
             ctx.nutServerConfig = success.configuration.nut_server.props;
             ctx.nutMonitorConfig = success.configuration.nut_monitor.props;
             nethserver.exec(
-              ["nethserver-nut/read"],
+              ["nethserver-nut/settings/read"],
               { "app_info": "models" },
               null,
               function (success) {
@@ -400,6 +372,11 @@ export default {
                   ctx.viewConfig.upsName = ctx.nutServerConfig.Ups;
                   ctx.viewConfig.upsUser = ctx.nutServerConfig.User;
                   ctx.viewConfig.password = ctx.nutServerConfig.Password;
+                  if (ctx.viewConfig.driver) {
+                    ctx.showModel = false;
+                  } else {
+                    ctx.showModel = true;
+                  }
                   ctx.configLoaded = true;
                   ctx.modelTyped = false;
                 } catch (e) {
@@ -449,24 +426,42 @@ export default {
       this.showErrorPassword = false;
       this.showErrorUpsName = false;
       this.showErrorUpsUser = false;
+      var enableNutServer = this.nutServerConfig.status;
+      var enableNutUps = this.viewConfig.enableNutUps;
+
+      if (!this.viewConfig.enableNutUps) {
+        // if nut-monitor is turned off, then disable nut-server too
+        enableNutServer = "disabled";
+      } else if (this.viewConfig.mode === 'server') {
+        // if mode = server, then enable nut-server
+        enableNutServer = "enabled";
+      }
+
+      var master;
+      if (this.viewConfig.mode === 'client') {
+        master = this.viewConfig.master;
+      } else {
+        master = '';
+      }
+
       var configObj = {
         "configuration": {
           "nut_server": {
             "props": {
-              "status": this.nutServerConfig.status,
+              "status": enableNutServer,
               "access": this.nutServerConfig.access,
-              "User": this.viewConfig.upsUser,
+              "User": enableNutUps ? this.viewConfig.upsUser : this.nutServerConfig.User,
               "TCPPort": this.nutServerConfig.TCPPort,
-              "Device": this.viewConfig.device,
-              "Model": this.viewConfig.driver,
-              "Password": this.viewConfig.password,
-              "Ups": this.viewConfig.upsName
+              "Device": enableNutUps ? this.viewConfig.device : this.nutServerConfig.Device,
+              "Model": enableNutUps ? this.viewConfig.driver : this.nutServerConfig.Model,
+              "Password": enableNutUps ? this.viewConfig.password : this.nutServerConfig.Password,
+              "Ups": enableNutUps ? this.viewConfig.upsName : this.nutServerConfig.Ups
             }
           },
           "nut_monitor": {
             "props": {
-              "status": this.viewConfig.enableNutUps? "enabled" : "disabled",
-              "Master": this.viewConfig.mode === 'client' ? this.viewConfig.master : '',
+              "status": enableNutUps ? "enabled" : "disabled",
+              "Master": enableNutUps ? master : this.nutMonitorConfig.Master,
               "Notify": this.nutMonitorConfig.Notify
             }
           }
@@ -474,7 +469,7 @@ export default {
       }
       var context = this;
       nethserver.exec(
-          ["nethserver-nut/validate"],
+          ["nethserver-nut/settings/validate"],
           configObj,
           null,
           function () {
@@ -487,7 +482,7 @@ export default {
             );
             // update values
             nethserver.exec(
-              ["nethserver-nut/update"],
+              ["nethserver-nut/settings/update"],
               configObj,
               function(stream) {
                 console.info("nut-update", stream); /* eslint-disable-line no-console */
@@ -543,6 +538,10 @@ export default {
       setTimeout(function() {
         ctx.passwordForSlavesCopied = false;
       }, 2000);
+    },
+    editDriver() {
+      this.viewConfig.driver = '';
+      this.showModel = true;
     }
   }
 };

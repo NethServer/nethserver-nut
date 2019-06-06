@@ -24,7 +24,6 @@ import Router from 'vue-router'
 import VueToggleButton from 'vue-js-toggle-button';
 import DocInfo from "./directives/DocInfo.vue";
 import VueGoodTable from "vue-good-table";
-// import _ from 'lodash';
 import VueClipboard from 'vue-clipboard2'
 
 import "v-suggestions/dist/v-suggestions.css";
@@ -35,9 +34,6 @@ import Dashboard from './views/Dashboard.vue'
 import Settings from './views/Settings.vue'
 import Logs from './views/Logs.vue'
 import About from './views/About.vue'
-
-import UtilService from "./services/util"
-Vue.mixin(UtilService)
 
 window.c3 = require('c3');
 window.d3 = require('d3');

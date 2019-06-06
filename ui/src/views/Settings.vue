@@ -435,6 +435,9 @@ export default {
       } else if (this.viewConfig.mode === 'server') {
         // if mode = server, then enable nut-server
         enableNutServer = "enabled";
+      } else {
+        // if mode = client, then disable nut-server
+        enableNutServer = "disabled";
       }
 
       var master;

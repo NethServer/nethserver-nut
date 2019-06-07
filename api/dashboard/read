@@ -110,12 +110,22 @@ def read_status():
     return status
 
 try:
-    status = read_status()
-    clients = read_clients()
-    nut_server_config = read_config('nut-server')
-    nut_monitor_config = read_config('nut-monitor')
-    output = simplejson.dumps({ 'status': status, 'clients': clients, 'configuration': { 'nut_server': nut_server_config, 'nut_monitor': nut_monitor_config }})
-    print (output)
+    line = fileinput.input()[0].rstrip()
+    input_json = simplejson.loads(line)
+    app_info = input_json["app_info"]
+
+    if app_info == 'configuration':
+        nut_server_config = read_config('nut-server')
+        nut_monitor_config = read_config('nut-monitor')
+        output = simplejson.dumps({'configuration': { 'nut_server': nut_server_config, 'nut_monitor': nut_monitor_config } })
+        print (output)
+    elif app_info == 'status':
+        status = read_status()
+        clients = read_clients()
+        output = simplejson.dumps({ 'status': status, 'clients': clients })
+        print (output)
+    else:
+        raise ValueError('app_info must be one of \'configuration\' or \'status\'')
 except Exception, e:
     print simplejson.dumps({ 'error': "%s" % e })
     sys.exit(1)

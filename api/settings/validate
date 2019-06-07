@@ -90,7 +90,7 @@ if ($data['configuration']['nut_monitor']['props']['Master'] == '') {
     $nut_server_validator->declareParameter('Ups', Validate::NOTEMPTY);
     $nut_server_validator->declareParameter('User', Validate::USERNAME);
     $nut_server_validator->declareParameter('Password', Validate::NOTEMPTY);
-    $nut_monitor_validator->declareParameter('Master', $nut_monitor_validator->createValidator()->orValidator($nut_monitor_validator->createValidator(Validate::HOSTADDRESS), $nut_monitor_validator->createValidator()->equalTo('')));
+    $nut_monitor_validator->declareParameter('Master', Validate::HOSTADDRESS);
 }
 
 # Validate the input

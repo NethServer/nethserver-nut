@@ -117,7 +117,7 @@
                   class="combobox form-control"
                   v-model="viewConfig.device"
                 >
-                  <option value="auto">{{$t('settings.device_auto')}}</option>
+                  <option value="auto">{{$t('settings.device_usb_auto')}}</option>
                   <option value="/dev/ttyS0">{{$t('settings.device_ttyS0')}}</option>
                   <option value="/dev/ttyS1">{{$t('settings.device_ttyS1')}}</option>
                   <option value="/dev/ttyS2">{{$t('settings.device_ttyS2')}}</option>

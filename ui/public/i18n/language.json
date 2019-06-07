@@ -41,15 +41,17 @@
     "ups_name": "UPS name",
     "ups_user": "UPS user",
     "password_for_clients": "Password for clients",
-    "master_server_address": "Master server address",
+    "server_address": "Server address",
     "password": "Password",
     "configuration_saved": "Configuration saved succesfully",
     "configuration_failed": "Configuration not saved",
-    "master_validation": "Master server address must be a valid hostname or empty",
+    "master_validation": "Server address must be a valid hostname",
     "password_validation": "Password must not be empty",
     "ups_name_validation": "UPS name must not be empty",
     "ups_user_validation": "UPS user must be a valid username",
-    "search_for_model": "Search for model"
+    "driver_validation": "Please search for a model and choose a driver",
+    "search_for_model": "Search for model",
+    "hostname_or_ip_address": "Hostname or IP address"
   },
   "about": {
     "title": "About",
@@ -81,6 +83,12 @@
     "clients_connected": "Clients connected",
     "ups_clients": "UPS clients",
     "ups_not_configured": "UPS not configured",
-    "empty_state": "Configuration is incomplete or incorrect. Click the button below to configure"
+    "empty_state": "Configuration is incomplete or incorrect. Click the button below to configure",
+    "online": "Online",
+    "offline": "Offline",
+    "empty_piechart_label": "Statistics are not available"
+  },
+  "docs": {
+    "model": "Manufacturer is shown in bold, it is followed by model name and support level (number of stars)."
   }
 }

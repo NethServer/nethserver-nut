@@ -3,7 +3,7 @@
     <h1>{{$t('settings.title')}}</h1>
     <div v-if="!configLoaded" class="spinner spinner-lg"></div>
     <div v-if="configLoaded">
-      <form class="form-horizontal">
+      <form class="form-horizontal" v-on:submit.prevent="btSaveClick">
         <!-- Enable NUT UPS -->
         <div class="form-group">
           <label
@@ -42,7 +42,14 @@
               <label
                 class="col-sm-2 control-label"
                 for="textInput-modal-markup"
-              >{{$t('settings.model')}}</label>
+              >{{$t('settings.model')}}
+                <doc-info
+                  :placement="'top'"
+                  :title="$t('settings.model')"
+                  :chapter="'model'"
+                  :inline="true"
+                ></doc-info>
+              </label>
               <div class="col-sm-5">
                 <suggestions
                   v-model="viewConfig.model"
@@ -68,7 +75,7 @@
               </div>
             </div>
             <!-- Driver -->
-            <div class="form-group">
+            <div class="form-group" :class="{ 'has-error': showErrorDriver }">
               <label
                 class="col-sm-2 control-label"
                 for="textInput-modal-markup"
@@ -93,7 +100,9 @@
                   v-model="viewConfig.driver"
                   v-if="!modelTyped"
                   :disabled="!modelTyped"
+                  required
                 >
+                <span class="help-block" v-if="showErrorDriver">{{$t('settings.driver_validation')}}</span>
               </div>
               <!-- Edit driver -->
               <div class="col-sm-2 adjust-index" v-if="!showModel">
@@ -193,19 +202,25 @@
             </div>
           </div>
           <div v-if="viewConfig.mode === 'client'">
-            <!-- Master server address -->
-            <div class="form-group" v-bind:class="{ 'has-error': showErrorMaster }">
+            <!-- Server address -->
+            <div class="form-group" :class="{ 'has-error': showErrorMaster }">
               <label
                 class="col-sm-2 control-label"
                 for="textInput-modal-markup"
-              >{{$t('settings.master_server_address')}}</label>
+              >{{$t('settings.server_address')}}</label>
               <div class="col-sm-5">
-                <input type="input" class="form-control" v-model="viewConfig.master">
+                <input 
+                  type="input" 
+                  class="form-control" 
+                  v-model="viewConfig.master" 
+                  required 
+                  :placeholder="$t('settings.hostname_or_ip_address')"
+                >
                 <span class="help-block" v-if="showErrorMaster">{{$t('settings.master_validation')}}</span>
               </div>
             </div>
             <!-- Password -->
-            <div class="form-group" v-bind:class="{ 'has-error': showErrorPassword }">
+            <div class="form-group" :class="{ 'has-error': showErrorPassword }">
               <label
                 class="col-sm-2 control-label"
                 for="textInput-modal-markup"
@@ -283,7 +298,7 @@
         <div class="form-group">
           <label class="col-sm-2 control-label" for="textInput-modal-markup"></label>
           <div class="col-sm-5">
-            <button class="btn btn-primary" type="button" v-on:click="btSaveClick">{{$t('save')}}</button>
+            <button class="btn btn-primary" type="submit">{{$t('save')}}</button>
           </div>
         </div>
       </form>
@@ -318,6 +333,7 @@ export default {
       showErrorPassword: false,
       showErrorUpsName: false,
       showErrorUpsUser: false,
+      showErrorDriver: false,
       upsNameCopied: false,
       upsUserCopied: false,
       passwordForSlavesCopied: false,
@@ -418,6 +434,7 @@ export default {
       this.driversForModel = item.drivers;
       if (this.driversForModel.length > 0) {
         this.viewConfig.driver = this.driversForModel[0];
+        this.showErrorDriver = false;
       }
       this.modelTyped = true;
     },
@@ -513,6 +530,8 @@ export default {
                   context.showErrorUpsName = true;
                 } else if (param === 'User') {
                   context.showErrorUpsUser = true;
+                } else if (param === 'Model') {
+                  context.showErrorDriver = true;
                 }
               }
             } catch (e) {

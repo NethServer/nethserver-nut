@@ -29,15 +29,24 @@
                 <label class="col-sm-3 control-label property-large">{{ $t('dashboard.model') }}</label>
                 <div class="col-sm-9 adjust-li">
                   <p class="line-high property-large">
-                    {{ status.device_model }}
-                    <span class="gray">({{ status.driver_name }})</span>
+                    <span v-if="showErrorState">
+                      -
+                    </span>
+                    <span v-else>
+                      {{ status.device_model }}
+                      <span class="gray">({{ status.driver_name }})</span>
+                    </span>
                   </p>
                 </div>
                 <label class="col-sm-3 control-label property-large">{{ $t('dashboard.status') }}</label>
                 <div class="col-sm-9 adjust-li">
                   <p class="line-high property-large">
-                    <span v-if="status.ups_status === 'OL'">
-                      Online
+                    <span v-if="showErrorState">
+                      {{ $t('dashboard.offline') }}
+                      <span class="fa pficon-error-circle-o"></span>
+                    </span>
+                    <span v-else-if="status.ups_status === 'OL'">
+                      {{ $t('dashboard.online') }}
                       <span class="fa pficon-ok"></span>
                     </span>
                     <span v-else>
@@ -58,7 +67,13 @@
             <div class="stats-container col-xs-12 col-sm-4 col-md-4 width-30">
               <span
                 class="card-pf-utilization-card-details-count stats-count"
-              >{{ parseFloat(status.input_voltage) }} V</span>
+              >
+                <span>
+                  <span v-if="showErrorState">- </span>
+                  <span v-else>{{ parseFloat(status.input_voltage) }} </span>
+                  V
+                </span>
+              </span>
               <span class="card-pf-utilization-card-details-description stats-description">
                 <span
                   class="card-pf-utilization-card-details-line-2 stats-text"
@@ -68,7 +83,13 @@
             <div class="stats-container col-xs-12 col-sm-4 col-md-4">
               <span
                 class="card-pf-utilization-card-details-count stats-count"
-              >{{ parseFloat(status.output_voltage) }} V</span>
+              >
+                <span>
+                  <span v-if="showErrorState">- </span>
+                  <span v-else>{{ parseFloat(status.output_voltage) }} </span>
+                  V
+                </span>
+              </span>
               <span class="card-pf-utilization-card-details-description stats-description">
                 <span
                   class="card-pf-utilization-card-details-line-2 stats-text"
@@ -78,7 +99,13 @@
             <div class="stats-container col-xs-12 col-sm-4 col-md-4">
               <span
                 class="card-pf-utilization-card-details-count stats-count"
-              >{{ parseFloat(status.ups_temperature) }} &deg;C</span>
+              >
+                <span>
+                  <span v-if="showErrorState">- </span>
+                  <span v-else>{{ parseFloat(status.ups_temperature) }} </span>
+                  &deg;C
+                </span>
+              </span>
               <span class="card-pf-utilization-card-details-description stats-description">
                 <span
                   class="card-pf-utilization-card-details-line-2 stats-text"
@@ -88,7 +115,7 @@
           </div>
         </div>
 
-        <div class="row-eq-height divider">
+        <div :class="['row-eq-height', { divider: !showErrorState }]">
           <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 resources-panel">
             <div class="panel panel-default">
               <div class="panel-heading">
@@ -100,9 +127,13 @@
                 </h3>
               </div>
               <div class="panel-body">
-                <div id="load-chart" class="text-center"></div>
+                <div v-if="showErrorState" class="empty-piechart">
+                  <span class="fa fa-pie-chart"></span>
+                  <div>{{ $t('dashboard.empty_piechart_label') }}</div>
+                </div>
+                <div v-else id="load-chart" class="text-center"></div>
               </div>
-              <div class="panel-footer" v-show="!nutMonitorConfig.Master">
+              <div class="panel-footer" v-show="!nutMonitorConfig.Master && !showErrorState">
                 <div>
                   <span class="pficon pficon-users filter-icon"></span>
                   <span>
@@ -129,9 +160,13 @@
                 </h3>
               </div>
               <div class="panel-body">
-                <div id="battery-charge-chart" class="text-center"></div>
+                <div v-if="showErrorState" class="empty-piechart">
+                  <span class="fa fa-pie-chart"></span>
+                  <div>{{ $t('dashboard.empty_piechart_label') }}</div>
+                </div>
+                <div v-else id="battery-charge-chart" class="text-center"></div>
               </div>
-              <div class="panel-footer">
+              <div class="panel-footer" v-if="!showErrorState">
                 <div>
                   <span class="fa fa-clock-o filter-icon"></span>
                   <span>
@@ -153,8 +188,8 @@
           </div>
         </div>
 
-        <h3>{{$t('dashboard.full_status')}}</h3>
-        <div class="form-group">
+        <h3 v-if="!showErrorState">{{$t('dashboard.full_status')}}</h3>
+        <div v-if="!showErrorState" class="form-group">
           <legend class="fields-section-header-pf col-sm-1" aria-expanded="true">
             <span
               :class="['fa fa-angle-right field-section-toggle-pf', showRawOutput ? 'fa-angle-down' : '']"
@@ -165,7 +200,7 @@
             >{{$t('dashboard.details')}}</a>
           </legend>
         </div>
-        <div class="form-group margin-top-40" v-show="showRawOutput">
+        <div v-if="!showErrorState" class="form-group margin-top-40" v-show="showRawOutput">
           <ul>
             <li v-for="(i, ik) in status" :key="ik">
               <code>{{ ik }}</code>
@@ -205,7 +240,8 @@ export default {
       clients_popover_text: '',
       nutServerConfig: {},
       nutMonitorConfig: {},
-      showEmptyState: false
+      showEmptyState: false,
+      showErrorState: false,
     };
   },
   methods: {
@@ -213,27 +249,49 @@ export default {
       var ctx = this;
       nethserver.exec(
         ["nethserver-nut/dashboard/read"],
-        {},
+        { "app_info": "configuration" },
         null,
         function(success) {
           try {
             success = JSON.parse(success);
-            ctx.status = success.status;
-            ctx.clients = success.clients;
             ctx.nutServerConfig = success.configuration.nut_server.props;
             ctx.nutMonitorConfig = success.configuration.nut_monitor.props;
-            ctx.getClientsPopoverText();
-            ctx.showEmptyState = false;
-            ctx.configLoaded = true;
-            ctx.initMemoryCharts();
+            if (!ctx.nutServerConfig.Model && !ctx.nutMonitorConfig.Master) {
+              // model and master not defined -> empty state
+              ctx.showEmptyState = true;
+              ctx.configLoaded = true;
+            } else {
+              // retrieve UPS status
+              nethserver.exec(
+              ["nethserver-nut/dashboard/read"],
+              { "app_info": "status" },
+              null,
+              function(success) {
+                try {
+                  success = JSON.parse(success);
+                  ctx.status = success.status;
+                  ctx.clients = success.clients;
+                  ctx.getClientsPopoverText();
+                  ctx.showEmptyState = false;
+                  ctx.configLoaded = true;
+                  ctx.initMemoryCharts();
+                } catch (e) {
+                  console.error(e); /* eslint-disable-line no-console */
+                }
+              },
+              function(error) {
+                console.error(error) /* eslint-disable-line no-console */
+                ctx.showErrorState = true;
+                ctx.configLoaded = true;
+              }
+            );
+            }
           } catch (e) {
-            console.error(e); /* eslint-disable-line no-console */
+            console.error(e) /* eslint-disable-line no-console */
           }
         },
         function(error) {
           console.error(error); /* eslint-disable-line no-console */
-          ctx.showEmptyState = true;
-          ctx.configLoaded = true;
         }
       );
     },
@@ -379,5 +437,14 @@ export default {
 }
 .margin-left-4 {
   margin-left: 4px;
+}
+.empty-piechart {
+  margin-top: 2em;
+  text-align: center;
+  color: #9c9c9c;
+}
+.empty-piechart .fa {
+  font-size: 92px;
+  color: #bbbbbb;
 }
 </style>

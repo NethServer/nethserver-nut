@@ -69,9 +69,8 @@
                 class="card-pf-utilization-card-details-count stats-count"
               >
                 <span>
-                  <span v-if="showErrorState">- </span>
-                  <span v-else>{{ parseFloat(status.input_voltage) }} </span>
-                  V
+                  <span v-if="showErrorState">-</span>
+                  <span v-else>{{ parseFloat(status.input_voltage) }} V</span>
                 </span>
               </span>
               <span class="card-pf-utilization-card-details-description stats-description">
@@ -85,9 +84,8 @@
                 class="card-pf-utilization-card-details-count stats-count"
               >
                 <span>
-                  <span v-if="showErrorState">- </span>
-                  <span v-else>{{ parseFloat(status.output_voltage) }} </span>
-                  V
+                  <span v-if="showErrorState">-</span>
+                  <span v-else>{{ parseFloat(status.output_voltage) }} V</span>
                 </span>
               </span>
               <span class="card-pf-utilization-card-details-description stats-description">
@@ -101,9 +99,8 @@
                 class="card-pf-utilization-card-details-count stats-count"
               >
                 <span>
-                  <span v-if="showErrorState">- </span>
-                  <span v-else>{{ parseFloat(status.ups_temperature) }} </span>
-                  &deg;C
+                  <span v-if="showErrorState">-</span>
+                  <span v-else>{{ parseFloat(status.ups_temperature) }} &deg;C</span>
                 </span>
               </span>
               <span class="card-pf-utilization-card-details-description stats-description">

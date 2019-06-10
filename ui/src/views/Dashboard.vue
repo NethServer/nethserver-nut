@@ -347,14 +347,16 @@ export default {
       c3.generate(batteryChargeConfig);
       patternfly.pfSetDonutChartTitle(
         "#load-chart",
-        parseFloat(this.status.ups_load),
-        " %"
+        parseFloat(this.status.ups_load)
       );
       patternfly.pfSetDonutChartTitle(
         "#battery-charge-chart",
-        parseFloat(this.status.battery_charge),
-        " %"
+        parseFloat(this.status.battery_charge)
       );
+      var loadChartTitle = d3.select("#load-chart").select('text.c3-chart-arcs-title');
+      loadChartTitle.insert('tspan').text("%").classed('donut-title-small-pf', true).attr('dy', 25).attr('x', 0);
+      var batteryChartTitle = d3.select("#battery-charge-chart").select('text.c3-chart-arcs-title');
+      batteryChartTitle.insert('tspan').text("%").classed('donut-title-small-pf', true).attr('dy', 25).attr('x', 0);
     }
   }
 };

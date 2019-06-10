@@ -1,0 +1,131 @@
+#!/usr/bin/python
+
+#
+# Copyright (C) 2019 Nethesis S.r.l.
+# http://www.nethesis.it - nethserver@nethesis.it
+#
+# This script is part of NethServer.
+#
+# NethServer is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License,
+# or any later version.
+#
+# NethServer is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NethServer.  If not, see COPYING.
+#
+
+import simplejson
+import sys
+import subprocess
+import fileinput
+
+def read_config(config_name):
+    bash_command = "/sbin/e-smith/config getjson %s" % config_name
+    process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE)
+    output, error = process.communicate()
+    config_json = simplejson.loads(output)
+    return config_json
+
+def read_clients():
+    nut_monitor_config = read_config('nut-monitor')
+    master = nut_monitor_config['props']['Master']
+
+    if master:
+        return []
+
+    nut_server_config = read_config('nut-server')
+    ups_name = nut_server_config['props']['Ups']
+
+    if not ups_name:
+        ups_name = 'UPS'
+
+    bash_command = "timeout 2 /usr/bin/upsc -c %s" % ups_name
+    process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, error = process.communicate()
+    if error:
+        raise Exception("Error invoking /usr/bin/upsc: " + error.strip())
+
+    lines = output.split("\n")
+    clients = []
+
+    # every line contains an IP address
+    for ip_address in lines:
+        if ip_address:
+            bash_command = "timeout 2 /usr/bin/host %s" % ip_address
+            process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            output, error = process.communicate()
+            if error:
+                raise Exception("Error invoking /usr/bin/host: " + error.strip())
+
+            if 'not found' in output:
+                clients.append(ip_address)
+            else:
+                hostname = output.split()[-1]
+                # remove trailing dot from hostname
+                if hostname[-1] == '.':
+                    hostname = hostname[:-1]
+
+                clients.append(hostname)
+
+    return clients
+
+def read_status():
+    nut_server_config = read_config('nut-server')
+    ups_name = nut_server_config['props']['Ups']
+
+    if not ups_name:
+        ups_name = 'UPS'
+
+    nut_server_status = nut_server_config['props']['status']
+
+    if nut_server_status == 'enabled':
+        ups_server = 'localhost'
+    else:
+        nut_monitor_config = read_config('nut-monitor')
+        ups_server = nut_monitor_config['props']['Master']
+
+    bash_command = "timeout 2 /usr/bin/upsc %s@%s" % (ups_name, ups_server)
+    process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, error = process.communicate()
+    if error:
+        raise Exception("Error invoking /usr/bin/upsc: " + error.strip())
+
+    lines = output.split("\n")
+    status = {}
+
+    for line in lines:
+        tokens = line.split(": ")
+
+        if (len(tokens) > 1):
+            prop_name = tokens[0].replace(".", "_").replace("-", "_")
+            prop_value = tokens[1]
+            status[prop_name] = prop_value
+
+    return status
+
+try:
+    line = fileinput.input()[0].rstrip()
+    input_json = simplejson.loads(line)
+    app_info = input_json["app_info"]
+
+    if app_info == 'configuration':
+        nut_server_config = read_config('nut-server')
+        nut_monitor_config = read_config('nut-monitor')
+        output = simplejson.dumps({'configuration': { 'nut_server': nut_server_config, 'nut_monitor': nut_monitor_config } })
+        print (output)
+    elif app_info == 'status':
+        status = read_status()
+        clients = read_clients()
+        output = simplejson.dumps({ 'status': status, 'clients': clients })
+        print (output)
+    else:
+        raise ValueError('app_info must be one of \'configuration\' or \'status\'')
+except Exception, e:
+    print simplejson.dumps({ 'error': "%s" % e })
+    sys.exit(1)

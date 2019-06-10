@@ -1,0 +1,59 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2019 Nethesis S.r.l.
+# http://www.nethesis.it - nethserver@nethesis.it
+#
+# This script is part of NethServer.
+#
+# NethServer is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License,
+# or any later version.
+#
+# NethServer is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NethServer.  If not, see COPYING.
+#
+
+. /usr/libexec/nethserver/api/lib/helper_functions
+
+# Read JSON from stdin and set the record
+data=$(cat /dev/stdin)
+
+nutserver_status=$(echo $data | jq -r '.configuration.nut_server.props.status')
+access=$(echo $data | jq -r '.configuration.nut_server.props.access')
+user=$(echo $data | jq -r '.configuration.nut_server.props.User')
+tcpport=$(echo $data | jq -r '.configuration.nut_server.props.TCPPort')
+device=$(echo $data | jq -r '.configuration.nut_server.props.Device')
+model=$(echo $data | jq -r '.configuration.nut_server.props.Model')
+password=$(echo $data | jq -r '.configuration.nut_server.props.Password')
+ups=$(echo $data | jq -r '.configuration.nut_server.props.Ups')
+
+nutmonitor_status=$(echo $data | jq -r '.configuration.nut_monitor.props.status')
+master=$(echo $data | jq -r '.configuration.nut_monitor.props.Master')
+notify=$(echo $data | jq -r '.configuration.nut_monitor.props.Notify')
+
+/sbin/e-smith/config setprop nut-server status "$nutserver_status" access "$access" \
+    User "$user" TCPPort "$tcpport" Device "$device" Model "$model" Password "$password" Ups "$ups"
+
+if [ $? -gt 0 ]; then
+    invalid_error
+fi
+
+/sbin/e-smith/config setprop nut-monitor status "$nutmonitor_status" Master "$master" Notify "$notify"
+
+if [ $? -gt 0 ]; then
+    invalid_error
+fi
+
+/sbin/e-smith/signal-event -j nethserver-nut-save
+if [ $? -gt 0 ]; then
+    error "EventFailed" "See /var/log/messages"
+else
+    success
+fi

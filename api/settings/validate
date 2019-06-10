@@ -1,0 +1,106 @@
+#!/usr/bin/php
+<?php
+/*
+ * Copyright (C) 2019 Nethesis S.r.l.
+ * http://www.nethesis.it - nethserver@nethesis.it
+ *
+ * This script is part of NethServer.
+ *
+ * NethServer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License,
+ * or any later version.
+ *
+ * NethServer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with NethServer.  If not, see COPYING.
+*/
+
+require_once("/usr/libexec/nethserver/api/lib/Helpers.php");
+
+function readModels() {
+    $models = array();
+    $handle = @fopen("/usr/share/nut/driver.list", "r");
+    if ($handle) {
+        while (($buffer = fgets($handle, 4096)) !== false) {
+            if ($buffer[0] == "#") {
+                continue;
+            }
+            $tmp = explode("\t",trim($buffer));
+            if ($tmp[0]) {
+                if (!isset($tmp[5]) ) {
+                    continue;
+                }
+                $driver_string = str_replace('"','',$tmp[5]);
+                $driver_list = explode(" or ", $driver_string);
+                
+                $man = str_replace('"','',$tmp[0]);
+                $mod = str_replace('"','',$tmp[3]);
+                $n = (int)str_replace('"','',$tmp[2]);
+                $star = "";
+                for ($i=0; $i<$n; $i++) {
+                    $star.="*";
+                }
+                $desc = "$man - $mod ($star)";
+                
+                if (!isset($models[$desc])) {
+                    $models[$desc] = $driver_list;
+                } else {
+                    foreach ($driver_list as $index => $driver) {
+                        array_push($models[$desc], $driver);
+                    }
+                }
+            }
+        }
+        if (!feof($handle)) {
+            $models = array();
+        }
+        fclose($handle);
+    }
+    return $models;
+}
+
+$data = readInput();
+
+$nut_server_validator = new LegacyValidator($data['configuration']['nut_server']['props']);
+$nut_monitor_validator = new LegacyValidator($data['configuration']['nut_monitor']['props']);
+$devices = array('auto','/dev/ttyS0','/dev/ttyS1','/dev/ttyS2','/dev/ttyUSB0','/dev/ttyUSB1');
+$models = readModels();
+
+$driver_list = array();
+foreach (array_values($models) as $index => $drivers) {
+    foreach ($drivers as $index => $driver) {
+        array_push($driver_list, $driver);
+    }
+}
+
+$nut_server_validator->declareParameter('status', Validate::SERVICESTATUS);
+$nut_monitor_validator->declareParameter('status', Validate::SERVICESTATUS);
+
+if ($data['configuration']['nut_monitor']['props']['Master'] == '') {
+    // Validation for mode = Server
+    $nut_server_validator->declareParameter('Model', $nut_server_validator->createValidator()->memberOf($driver_list));
+    $nut_server_validator->declareParameter('Device', $nut_server_validator->createValidator()->memberOf($devices));
+} else {
+    // Validation for mode = Client
+    $nut_server_validator->declareParameter('Ups', Validate::NOTEMPTY);
+    $nut_server_validator->declareParameter('User', Validate::USERNAME);
+    $nut_server_validator->declareParameter('Password', Validate::NOTEMPTY);
+    $nut_monitor_validator->declareParameter('Master', Validate::HOSTADDRESS);
+}
+
+# Validate the input
+
+if (!$nut_server_validator->validate()) {
+    error($nut_server_validator);
+}
+
+if (!$nut_monitor_validator->validate()) {
+    error($nut_monitor_validator);
+}
+
+success();

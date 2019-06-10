@@ -1,0 +1,112 @@
+#!/usr/bin/python
+
+#
+# Copyright (C) 2019 Nethesis S.r.l.
+# http://www.nethesis.it - nethserver@nethesis.it
+#
+# This script is part of NethServer.
+#
+# NethServer is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License,
+# or any later version.
+#
+# NethServer is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NethServer.  If not, see COPYING.
+#
+
+import simplejson
+import sys
+import subprocess
+import fileinput
+
+class UpsModel:
+    def __init__(self, description, model_name, manufacturer, support_level, drivers):
+        self.description = description
+        self.model_name = model_name
+        self.manufacturer = manufacturer
+        self.support_level = support_level
+        self.drivers = set([])
+        self.add_drivers(drivers)
+        
+    def add_drivers(self, drivers):
+        for driver in drivers:
+            self.drivers.add(driver)
+
+def read_models():
+    lines = [line.rstrip('\n') for line in open('/usr/share/nut/driver.list')]
+    models_drivers = {}
+    models = []
+
+    for line in lines:
+        driver_params = line.split('\t')
+
+        if len(driver_params) < 6:
+            continue
+
+        # skip comments
+        if line[0] == '#':
+            continue
+
+        driver_string = driver_params[5].replace('"', '').replace("'", "")
+        drivers = driver_string.split(" or ")
+
+        manufacturer = driver_params[0].replace('"', '')
+        model_name = driver_params[3].replace('"', '')
+        support_level_num = int(driver_params[2].replace('"', ''))
+        support_level_stars = ''
+
+        for i in range(support_level_num):
+            support_level_stars += '*'
+        
+        description = manufacturer + ' - ' + model_name + ' (' + support_level_stars + ')'
+
+        # some models in /usr/share/nut/driver.list are duplicated or have multiple drivers
+        if not description in models_drivers:
+            ups_model = UpsModel(description, model_name, manufacturer, support_level_num, drivers)
+            models_drivers[description] = ups_model
+        else:
+            ups_model = models_drivers[description]
+        
+        ups_model.add_drivers(drivers)
+
+    for description, ups_model in models_drivers.iteritems():
+        model_json_string = '{ "model_name": "%s", "manufacturer": "%s", "drivers": %s, "description": "%s", "support_level": "%d" }' % \
+            (ups_model.model_name, ups_model.manufacturer, list(ups_model.drivers), ups_model.description, ups_model.support_level)
+        model_json_string = model_json_string.replace("'", '"')
+        model_json = simplejson.loads(model_json_string)
+        models.append(model_json)
+
+    return models
+
+def read_config(config_name):
+    bash_command = "/sbin/e-smith/config getjson %s" % config_name
+    process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE)
+    output, error = process.communicate()
+    config_json = simplejson.loads(output)
+    return config_json
+
+try:
+    line = fileinput.input()[0].rstrip()
+    input_json = simplejson.loads(line)
+    app_info = input_json["app_info"]
+
+    if app_info == 'configuration':
+        nut_server_config = read_config('nut-server')
+        nut_monitor_config = read_config('nut-monitor')
+        output = simplejson.dumps({'configuration': { 'nut_server': nut_server_config, 'nut_monitor': nut_monitor_config } })
+        print (output)
+    elif app_info == 'models':
+        models = read_models()
+        output = simplejson.dumps({ 'models': models })
+        print (output)
+    else:
+        raise ValueError('app_info must be one of \'configuration\' or \'models\'')
+except Exception, e:
+    print simplejson.dumps({ 'error': "%s" % e })
+    sys.exit(1)

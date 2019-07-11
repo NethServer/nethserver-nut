@@ -22,7 +22,7 @@
 
 <template>
   <div>
-    <h2>{{$t('logs.title')}}</h2>
+    <h1>{{$t('logs.title')}}</h1>
     <form class="form-horizontal">
       <div class="form-group">
         <div class="col-xs-12 col-sm-3 col-md-2">

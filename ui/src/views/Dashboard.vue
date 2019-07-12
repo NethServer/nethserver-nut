@@ -254,8 +254,12 @@ export default {
             success = JSON.parse(success);
             ctx.nutServerConfig = success.configuration.nut_server.props;
             ctx.nutMonitorConfig = success.configuration.nut_monitor.props;
-            if (!ctx.nutServerConfig.Model && !ctx.nutMonitorConfig.Master) {
-              // model and master not defined -> empty state
+            // model and master not defined -> empty state
+            // master = "" (server) and nut_server status = disabled -> empty state
+            // master != "" (client) and nut_monitor status = disabled -> empty state
+            if ((!ctx.nutServerConfig.Model && !ctx.nutMonitorConfig.Master)
+                || (!ctx.nutMonitorConfig.Master && ctx.nutServerConfig.status == "disabled")
+                || (ctx.nutMonitorConfig.Master && ctx.nutMonitorConfig.status == "disabled")) {
               ctx.showEmptyState = true;
               ctx.configLoaded = true;
             } else {

@@ -3,7 +3,7 @@ Name: nethserver-nut
 Version: 1.4.0
 Release: 1%{?dist}
 License: GPL
-URL: %{url_prefix}/%{name} 
+URL: %{url_prefix}/%{name}
 Source0: %{name}-%{version}.tar.gz
 Source1: %{name}-cockpit.tar.gz
 BuildArch: noarch
@@ -12,7 +12,7 @@ Requires: nethserver-base
 Requires: nut
 
 BuildRequires: perl
-BuildRequires: nethserver-devtools 
+BuildRequires: nethserver-devtools
 
 %description
 NethServer UPS managemnt using NUT
@@ -23,6 +23,7 @@ NethServer UPS managemnt using NUT
 %build
 %{makedocs}
 perl createlinks
+sed -i 's/_RELEASE_/%{version}/' %{name}.json
 
 %install
 rm -rf %{buildroot}
@@ -90,7 +91,7 @@ cat %{name}-%{version}-filelist
 - Update all inline help documentation - Task #1780 [NethServer]
 
 * Wed Oct 16 2013 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.5-1.ns6
-- Upsd daemon should listen on 0.0.0.0 - Enhancement #2139 
+- Upsd daemon should listen on 0.0.0.0 - Enhancement #2139
 - Db defaults: remove Runlevels prop. Refs #2067
 
 * Tue Jul 23 2013 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.4-1.ns6
@@ -107,5 +108,5 @@ cat %{name}-%{version}-filelist
 - Fix warnings on Dashboard when no UPS is connected #1760
 - Fix upsd.conf template
 
-* Fri Jun 07 2013 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.0-1.ns6 
+* Fri Jun 07 2013 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.0-1.ns6
 - First release

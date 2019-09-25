@@ -6,5 +6,6 @@ Cmnd_Alias NSAPI_NETHSERVER_NUT = \
     /usr/libexec/nethserver/api/nethserver-nut/settings/read, \
     /usr/libexec/nethserver/api/nethserver-nut/settings/update, \
     /usr/libexec/nethserver/api/nethserver-nut/settings/validate
-￼
+
 Defaults!NSAPI_NETHSERVER_NUT !requiretty
+

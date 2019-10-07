@@ -1,8 +1,8 @@
 {
     "id": "nethserver-nut",
     "name": "UPS",
-    "summary": "NethServer UPS managemnt using NUT",
-    "description": "NethServer UPS managemnt using NUT",
+    "summary": "NethServer UPS management using NUT",
+    "description": "NethServer UPS management using NUT",
     "url": "",
     "homepage": "https://github.com/NethServer/nethserver-nut",
     "provides": ["nethserver-nut"],

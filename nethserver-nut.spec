@@ -15,7 +15,7 @@ BuildRequires: perl
 BuildRequires: nethserver-devtools
 
 %description
-NethServer UPS managemnt using NUT
+NethServer UPS management using NUT
 
 %prep
 %setup

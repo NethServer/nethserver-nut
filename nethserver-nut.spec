@@ -1,6 +1,6 @@
 Summary: NethServer NUT configuration
 Name: nethserver-nut
-Version: 1.5.2
+Version: 1.5.3
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name}
@@ -51,6 +51,9 @@ cat %{name}-%{version}-filelist
 %ghost %attr(0644, root, root) %{_sysconfdir}/collectd.d/nut_nethserver.conf
 
 %changelog
+* Wed Jan 08 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.5.3-1
+- Cockpit: change package Dashboard page title - NethServer/dev#6004
+
 * Mon Oct 28 2019 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.5.2-1
 - Logs page in Cockpit - Bug NethServer/dev#5866
 

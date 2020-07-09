@@ -88,7 +88,7 @@ export default {
 }
 .v-suggestions .items {
   max-height: 290px;
-  overflow-y: hidden;
+  overflow-y: auto;
   border: 1px solid #bbb;
   border-width: 1px;
 }

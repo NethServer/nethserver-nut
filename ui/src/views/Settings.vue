@@ -425,8 +425,11 @@ export default {
       if (query.trim().length === 0) {
         return null;
       }
+      query = query.toLowerCase().replace(/\s|-/g, '');
+
       return this.models.filter(function(model) {
-        return (model.description.toLowerCase().includes(query.toLowerCase()));
+        model = model.description.toLowerCase().replace(/\s|-/g, '');
+        return (model.includes(query));
       });
     },
     selectModel(item) {
